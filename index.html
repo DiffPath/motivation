@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Quest: Habit Builder</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+<div id="setup-screen" class="app-container hidden">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <h1 style="color: var(--t-yellow);">Begin Your Journey</h1>
+            <p style="color: var(--text-muted); margin: 0;">Who will you be in this world?</p>
+        </div>
+        
+        <div class="input-grid" style="margin-bottom: 20px;">
+            <div class="input-group" style="border-left: 4px solid var(--t-green);">
+                <div class="input-details" style="width: 100%;">
+                    <label for="char-name">Character Name</label>
+                    <input type="text" id="char-name" placeholder="Enter name..." style="width: 100%; margin-top: 8px; text-align: left; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="input-group" style="border-left: 4px solid var(--t-purple);">
+                <div class="input-details" style="width: 100%;">
+                    <label for="setup-theme-select">Realm Theme</label>
+                    <select id="setup-theme-select" onchange="changeTheme(this.value)" style="width: 100%; margin-top: 8px; padding: 10px; background: var(--bg-dark); color: var(--text-main); border: 2px solid var(--grid-line); border-radius: 4px; font-family: inherit; font-size: 1rem; cursor: pointer;">
+                        <option value="fantasy">Epic Quest (Fantasy)</option>
+                        <option value="bioluminescent">Mystic Woods (Bioluminescent)</option>
+                        <option value="tetris">Retro Arcade (Tetris)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group" style="border-left: 4px solid var(--t-cyan); flex-direction: column; align-items: flex-start;">
+                <div class="input-details" style="width: 100%;">
+                    <label for="char-type">Familiar / Class</label>
+                    <select id="char-type" onchange="previewStats()" style="width: 100%; margin-top: 8px; padding: 10px; background: var(--bg-dark); color: var(--text-main); border: 2px solid var(--grid-line); border-radius: 4px; font-family: inherit; font-size: 1rem;">
+                        <option value="Black Cat">Black Cat</option>
+                        <option value="Rock Hyrax">Rock Hyrax</option>
+                        <option value="Earthworm">Earthworm</option>
+                        <option value="Gray Wolf">Gray Wolf</option>
+                        <option value="Frog">Frog</option>
+                    </select>
+                </div>
+
+                <div style="width: 100%; text-align: center; margin-top: 10px;">
+                    <img id="setup-char-img" src="" alt="Character Preview" style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--t-yellow); object-fit: cover; background-color: var(--bg-dark);">
+                </div>
+                
+                <div id="stat-preview" style="width: 100%; margin-top: 10px; padding-top: 10px; border-top: 2px dashed var(--grid-line); font-family: monospace; font-size: 0.95rem; color: var(--text-muted);">
+                </div>
+            </div>
+        </div>
+        
+        <button class="submit-btn" onclick="startAdventure()">Embark on Quest</button>
+    </div>
+
+    <div id="main-app" class="app-container hidden">
+        <header class="player-card">
+            
+            <div class="profile-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: var(--panel-bg); padding: 15px; border-radius: 4px; box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.05);">
+                <div style="position: relative;">
+                    <img id="main-avatar-img" src="" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--t-cyan); object-fit: cover;">
+                </div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h2 id="header-player-name" style="margin: 0 0 5px 0; font-size: 1.3rem; color: var(--text-main);">Hero Name</h2>
+                        <span id="level-display" style="color: var(--t-yellow); font-weight: bold; font-size: 1.1rem;">Level 1</span>
+                    </div>
+                    
+                    <div class="xp-bar-container" style="background: #000; height: 10px; border-radius: 5px; margin-bottom: 5px; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.8);">
+                        <div id="xp-bar" style="background: var(--t-green); height: 100%; border-radius: 5px; width: 0%; transition: width 0.3s;"></div>
+                    </div>
+                    <div id="xp-text" style="font-size: 0.8rem; margin-bottom: 8px; color: var(--text-muted); text-align: right;">0 / 100 XP</div>
+                    
+                    <div id="header-mini-stats" style="display: flex; gap: 10px; font-family: monospace; font-size: 0.85rem;">
+                        </div>
+                </div>
+            </div>
+            
+            <div id="level-up-message" class="hidden">🎉 Level Up! Keep up the great work! 🎉</div>
+        </header>
+
+<main>
+<div class="tab-navigation">
+    <button class="tab-link active" onclick="switchTab(event, 'tab-tasks')">Activity Log</button>
+    <button class="tab-link" onclick="switchTab(event, 'tab-adventure')">Adventure</button>
+    <button class="tab-link" onclick="switchTab(event, 'tab-stats-hub')">Stats & Info</button>
+    <button class="tab-link" onclick="switchTab(event, 'tab-social')">Social</button>
+    <button class="tab-link" onclick="switchTab(event, 'tab-settings')">Settings</button>
+</div>
+
+    <div id="tab-tasks" class="tab-content active">
+<section class="habits-section">
+    <h2>Log Your Time</h2>
+    <h3 id="current-date-display" style="color: var(--t-cyan); margin-top: -10px; margin-bottom: 15px; font-family: monospace; text-transform: uppercase;"></h3>
+    
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+        Enter the minutes spent on each activity. Leave blank if you didn't do it today.
+    </p>
+    
+<div class="input-grid">
+    <div class="input-group task-read">
+        <span class="icon">📖</span>
+        <div class="input-details">
+            <label for="min-read">Read a Book</label>
+            <span class="multiplier">1 XP / min</span>
+        </div>
+        <input type="number" id="min-read" min="0" placeholder="0">
+        <span class="min-label">min</span>
+    </div>
+
+    <div class="input-group task-chores">
+        <span class="icon">🧹</span>
+        <div class="input-details">
+            <label for="min-chores">Do Chores</label>
+            <span class="multiplier">1.5 XP / min</span>
+        </div>
+        <input type="number" id="min-chores" min="0" placeholder="0">
+        <span class="min-label">min</span>
+    </div>
+
+    <div class="input-group task-relax">
+        <span class="icon">🎬</span>
+        <div class="input-details">
+            <label for="min-relax">Movie</label>
+            <span class="multiplier">0.5 XP / min</span>
+        </div>
+        <input type="number" id="min-relax" min="0" placeholder="0">
+        <span class="min-label">min</span>
+    </div>
+
+    <div class="input-group task-exercise">
+        <span class="icon">🚴</span>
+        <div class="input-details">
+            <label for="min-exercise">Exercise</label>
+            <span class="multiplier">2 XP / min</span>
+        </div>
+        <input type="number" id="min-exercise" min="0" placeholder="0">
+        <span class="min-label">min</span>
+    </div>
+</div>
+
+    <button class="submit-btn" onclick="submitActivities()">Log Activities</button>
+</section>
+    </div>
+
+    <div id="tab-adventure" class="tab-content">
+    <section class="habits-section">
+        <h2>The Wilds</h2>
+        <div style="background: var(--panel-bg); padding: 15px; border-radius: 4px; box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.05);">
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-family: monospace; font-size: 1.1rem;">
+                <span style="color: var(--t-green);">HP: <span id="adv-hp">--</span> / <span id="adv-max-hp">--</span></span>
+                <span style="color: var(--t-yellow);">⚡ Energy: <span id="adv-energy">--</span> / <span id="adv-max-energy">--</span></span>
+                <span id="adv-status" style="color: var(--text-muted);">Status: Exploring</span>
+            </div>
+
+            <div id="adventure-log" style="height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border: 2px solid var(--grid-line); border-radius: 4px; font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                <div style="color: var(--text-muted);">You stand at the edge of the wilderness. What will you do?</div>
+            </div>
+
+            <div id="adv-explore-controls" style="display: flex; gap: 10px;">
+                <button onclick="advExplore()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem;">Explore</button>
+                <button onclick="advRest()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem; background-color: var(--t-blue);">Rest (Heal)</button>
+            </div>
+
+            <div id="adv-combat-controls" style="display: none; gap: 10px;">
+                <button onclick="advAttack()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem; background-color: var(--t-red);">Attack</button>
+                <button onclick="advFlee()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem; background-color: var(--t-purple);">Flee</button>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<div id="tab-stats-hub" class="tab-content">
+        <div class="sub-tab-navigation" style="display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 1px solid var(--grid-line); padding-bottom: 10px;">
+        <button class="sub-tab-link active" onclick="switchSubTab(event, 'sub-attributes')">Attributes</button>
+        <button class="sub-tab-link" onclick="switchSubTab(event, 'sub-charts')">Charts</button>
+        <button class="sub-tab-link" onclick="switchSubTab(event, 'sub-history')">Activity Log</button>
+        <button class="sub-tab-link" onclick="switchSubTab(event, 'sub-records')">Records</button>
+    </div>
+
+    <div id="sub-attributes" class="sub-tab-content" style="display: block;">
+        <section class="stats-section">
+            <div style="background-color: var(--panel-bg); padding: 15px; border-radius: 4px;">
+                <p style="color: var(--t-yellow); font-weight: bold; margin: 0 0 15px 0; text-align: center; font-family: inherit;">
+                    Unallocated Points: <span id="unallocated-points-display" style="font-size: 1.4rem;">0</span>
+                </p>
+                <div id="stats-allocation-container" style="font-family: monospace; font-size: 1rem; color: var(--text-muted); overflow-x: auto;"></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="sub-charts" class="sub-tab-content" style="display: none;">
+        <div class="chart-container" style="margin-bottom: 20px;">
+            <canvas id="dailyChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="cumulativeChart"></canvas>
+        </div>
+    </div>
+
+    <div id="sub-history" class="sub-tab-content" style="display: none;">
+        <ul id="activity-log" style="max-height: 300px; overflow-y: auto; background-color: var(--panel-bg); padding: 15px; border-radius: 4px;">
+            </ul>
+    </div>
+
+<div id="sub-records" class="sub-tab-content" style="display: none;">
+        <div style="background-color: var(--panel-bg); padding: 15px; border-radius: 4px; display: grid; gap: 15px;">
+            
+            <div style="border-bottom: 1px dashed var(--grid-line); padding-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="color: var(--t-yellow);">Best Daily XP:</span>
+                    <span id="record-max-xp" style="font-weight: bold; color: var(--text-main);">0 XP</span>
+                </div>
+                <div id="record-max-xp-details" style="font-size: 0.85rem; color: var(--text-muted); padding-left: 10px; border-left: 2px solid var(--t-yellow); display: none;">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
+                <span style="color: var(--t-cyan);">Most Reading (Day):</span>
+                <span id="record-max-read" style="font-weight: bold; color: var(--text-main);">0 min</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
+                <span style="color: var(--t-green);">Most Exercise (Day):</span>
+                <span id="record-max-exercise" style="font-weight: bold; color: var(--text-main);">0 min</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
+                <span style="color: var(--t-purple);">Most Chores (Day):</span>
+                <span id="record-max-chores" style="font-weight: bold; color: var(--text-main);">0 min</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
+                <span style="color: var(--t-blue);">Most Relaxing (Day):</span>
+                <span id="record-max-relax" style="font-weight: bold; color: var(--text-main);">0 min</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <div id="tab-social" class="tab-content">
+        <section class="habits-section">
+            <h2>Your Party</h2>
+            <div style="background: var(--panel-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <p style="color: var(--text-muted); margin-top: 0;">Add a companion to track their progress:</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="friend-search" placeholder="Character Name..." style="flex-grow: 1; margin: 0;">
+                    <button onclick="addFriend()" class="submit-btn" style="padding: 10px; font-size: 0.9rem; width: auto;">Add Friend</button>
+                </div>
+            </div>
+
+            <div id="friends-list-container" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+            </div>
+        </section>
+    </div>
+    <div id="tab-settings" class="tab-content">
+        <section class="settings-section">
+            <h2>App Settings</h2>
+            
+            <div class="setting-group" style="margin-top: 20px;">
+                <label for="theme-select" style="font-size: 1.1rem; font-weight: bold; margin-right: 15px;">Theme:</label>
+                <select id="theme-select" onchange="changeTheme(this.value)" style="width: 100%; margin-top: 10px; padding: 10px; background: var(--bg-dark); color: var(--text-main); border: 2px solid var(--grid-line); border-radius: 4px; font-family: inherit; font-size: 1rem; cursor: pointer;">
+                    <option value="fantasy">Epic Quest (Fantasy)</option>
+                    <option value="bioluminescent">Mystic Woods (Bioluminescent)</option>
+                    <option value="tetris">Retro Arcade (Tetris)</option>
+                </select>
+            </div>
+            
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 20px;">
+                More settings coming soon!
+            </p>
+        </section>
+    </div>
+</main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
