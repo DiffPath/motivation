@@ -1,0 +1,429 @@
+/* =========================================
+   1. FALLBACK / TETRIS VARIABLES
+   ========================================= */
+:root {
+    /* UI Colors */
+    --bg-dark: #121213;
+    --grid-line: #2a2a35;
+    --panel-bg: #1e1e24;
+    --text-main: #e0e0e0;
+    --text-muted: #888899;
+
+    /* The classic Tetromino palette */
+    --t-cyan: #00FFFF;   
+    --t-blue: #0000FF;   
+    --t-orange: #FFA500; 
+    --t-yellow: #FFFF00; 
+    --t-green: #00FF00;  
+    --t-purple: #800080; 
+    --t-red: #FF0000;    
+}
+
+/* =========================================
+   2. BASE STRUCTURAL STYLES (All Themes)
+   ========================================= */
+body {
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    color: var(--text-main);
+}
+
+.app-container {
+    max-width: 850px; /* Increased from 600px to allow for two columns */
+    width: 100%;
+    padding: 24px;
+    border-radius: 4px;
+    box-sizing: border-box; 
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px; /* Reduced from 30px */
+    padding-bottom: 15px; /* Reduced from 20px */
+    border-bottom: 2px solid var(--grid-line);
+}
+
+h1 {
+    margin: 0 0 10px 0; /* Reduced bottom margin from 20px to 10px */
+    color: var(--text-main);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Player Stats / XP Bar */
+.stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.level-badge {
+    background: var(--panel-bg);
+    border: 2px solid var(--t-purple);
+    color: var(--t-purple);
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: inset 0 0 10px rgba(128, 0, 128, 0.2);
+}
+
+.xp-container {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.xp-bar-background {
+    width: 100%;
+    height: 24px;
+    background-color: #000;
+    border: 2px solid #333;
+    padding: 2px;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--t-green);
+    background-image: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 16px,
+        rgba(0, 0, 0, 0.5) 16px,
+        rgba(0, 0, 0, 0.5) 20px
+    );
+    transition: width 0.4s ease-out;
+}
+
+#xp-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+#level-up-message {
+    margin-top: 15px;
+    color: var(--t-yellow);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: flash 0.4s infinite alternate;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Tab System */
+.tab-navigation {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--grid-line);
+}
+
+.tab-link {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 2px solid transparent;
+    border-bottom: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: monospace;
+    text-transform: uppercase;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.2s;
+}
+
+.tab-link:hover {
+    color: var(--text-main);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab-link.active {
+    color: var(--t-yellow);
+    background-color: var(--panel-bg);
+    border: 2px solid var(--grid-line);
+    border-bottom: 2px solid var(--panel-bg);
+    margin-bottom: -2px; 
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Activity Log */
+.history-section {
+    margin-top: 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li.history-day-card {
+    background: var(--panel-bg);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--grid-line);
+    border-left: 4px solid var(--t-purple);
+    animation: dropIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    overflow: hidden;
+}
+
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.day-total-xp {
+    color: var(--t-yellow);
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.granular-list {
+    border-top: 2px dashed var(--grid-line);
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.granular-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    font-size: 0.9rem;
+    animation: none;
+}
+
+.granular-list li .act-name { color: var(--text-main); }
+.granular-list li .act-mins { color: var(--text-muted); margin-left: 5px; }
+.granular-list li .act-xp { color: var(--t-green); font-family: monospace; }
+
+li.empty-log {
+    color: var(--text-muted);
+    justify-content: center;
+    text-align: center;
+    background: transparent;
+    border: 2px dashed var(--grid-line);
+    padding: 15px;
+    animation: none;
+}
+
+/* Chart Section */
+.chart-section {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px; /* Reduced from 300px to keep it on one screen */
+    width: 100%;
+    background-color: var(--bg-dark); 
+    border: 2px solid var(--grid-line);
+    padding: 15px;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    box-shadow: inset -2px -2px 0px rgba(0, 0, 0, 0.4), inset 2px 2px 0px rgba(255, 255, 255, 0.05);
+}
+
+/* Input Form */
+.input-grid {
+    display: grid; /* Changed from flex to grid */
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    background-color: var(--panel-bg);
+    padding: 10px 15px; /* Reduced top/bottom padding from 12px to 10px */
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    box-shadow: inset -2px -2px 0px rgba(0, 0, 0, 0.4), inset 2px 2px 0px rgba(255, 255, 255, 0.05);
+}
+
+.task-read { border-left: 4px solid var(--t-cyan); }
+.task-chores { border-left: 4px solid var(--t-orange); }
+.task-relax { border-left: 4px solid var(--t-purple); }
+.task-exercise { border-left: 4px solid var(--t-yellow); }
+
+.input-group .icon { font-size: 1.5rem; margin-right: 15px; width: 30px; text-align: center; }
+.input-details { flex-grow: 1; display: flex; flex-direction: column; }
+.input-details label { font-weight: bold; color: var(--text-main); font-size: 1.05rem; }
+.input-details .multiplier { font-size: 0.8rem; color: var(--t-green); font-family: monospace; margin-top: 2px; }
+
+.input-group input[type="number"], .input-group input[type="text"], select {
+    background-color: var(--bg-dark);
+    border: 2px solid var(--grid-line);
+    color: var(--text-main);
+    padding: 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input[type="number"] { width: 70px; text-align: right; font-family: monospace; }
+.input-group input[type="number"]:focus, .input-group input[type="text"]:focus, select:focus { border-color: var(--t-green); }
+.input-group .min-label { margin-left: 10px; color: var(--text-muted); font-family: monospace; }
+
+.submit-btn {
+    width: 100%;
+    background-color: var(--t-green);
+    color: #000;
+    border: none;
+    padding: 14px; /* Reduced from 18px */
+    font-size: 1.1rem; /* Reduced from 1.2rem */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.3), inset 4px 4px 0px rgba(255,255,255,0.4);
+    transition: all 0.1s;
+}
+
+.submit-btn:active {
+    transform: translateY(4px);
+    box-shadow: inset -1px -1px 0px rgba(0,0,0,0.3), inset 1px 1px 0px rgba(255,255,255,0.4);
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes dropIn { 0% { transform: translateY(-10px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes flash { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+/* Sub-Tab Styles */
+.sub-tab-link {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.sub-tab-link:hover {
+    color: var(--text-main);
+    background: rgba(255,255,255,0.05);
+}
+
+.sub-tab-link.active {
+    color: var(--bg-dark);
+    background: var(--text-main);
+    font-weight: bold;
+}
+
+/* =========================================
+   3. RETRO ARCADE (TETRIS) THEME OVERRIDES
+   ========================================= */
+body.theme-tetris {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #000000; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(43, 14, 82, 0.85)), url('https://www.datocms-assets.com/145957/1744284280-tetris-mobile.png?auto=format&fit=max&w=1200');
+    background-size: cover; background-position: center; background-attachment: fixed;
+}
+
+body.theme-tetris .app-container {
+    background-color: var(--panel-bg);
+    border: 2px solid var(--grid-line);
+    border-radius: 8px;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================
+   4. EPIC QUEST (FANTASY) THEME OVERRIDES
+   ========================================= */
+body.theme-fantasy {
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; 
+    background-color: #1a0b2e; 
+    background-image: linear-gradient(rgba(26, 11, 46, 0.7), rgba(43, 14, 82, 0.85)), url('https://images2.alphacoders.com/567/thumb-1920-567147.png');
+    background-size: cover; background-position: center; background-attachment: fixed;
+    
+    --bg-dark: #12081f; --panel-bg: #2d1b4d; --grid-line: #7b4fb6; 
+    --text-main: #f0fdf4; --text-muted: #c084fc; 
+    --t-cyan: #22d3ee; --t-orange: #fb923c; --t-purple: #c084fc; 
+    --t-yellow: #fde047; --t-green: #4ade80; --t-red: #fb7185; --t-blue: #38bdf8; 
+}
+
+body.theme-fantasy .app-container {
+    background-color: rgba(45, 27, 77, 0.95);
+    border: 2px solid var(--t-cyan);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
+}
+
+body.theme-fantasy .tab-link { font-family: 'Palatino Linotype', serif; font-weight: bold; }
+body.theme-fantasy .submit-btn { border: 2px solid var(--t-yellow); color: var(--bg-dark); }
+body.theme-fantasy .level-badge { background: var(--panel-bg); border: 2px solid var(--t-yellow); color: var(--t-yellow); box-shadow: inset 0 0 10px rgba(221, 161, 94, 0.1); }
+body.theme-fantasy .xp-bar-background { border-color: var(--t-yellow); background-color: var(--bg-dark); }
+body.theme-fantasy li.history-day-card { border-color: var(--grid-line); border-left: 4px solid var(--t-green); }
+body.theme-fantasy .day-header { background: #1f2b12; }
+body.theme-fantasy .granular-list { background: var(--panel-bg); }
+
+/* =========================================
+   5. MYSTIC WOODS (BIOLUMINESCENT) OVERRIDES
+   ========================================= */
+body.theme-bioluminescent {
+    font-family: 'Candara', 'Optima', 'Segoe UI', sans-serif; 
+    background-color: #1a0b2e; 
+    background-image: linear-gradient(rgba(26, 11, 46, 0.65), rgba(43, 14, 82, 0.8)), url('https://images5.alphacoders.com/138/thumb-1920-1383492.png');
+    background-size: cover; background-position: center; background-attachment: fixed;
+    
+    --bg-dark: #12081f; --panel-bg: rgba(45, 27, 77, 0.85); --grid-line: #7b4fb6; 
+    --text-main: #f0fdf4; --text-muted: #c084fc; 
+    --t-cyan: #22d3ee; --t-orange: #f472b6; --t-purple: #c084fc; 
+    --t-yellow: #d946ef; --t-green: #38bdf8; --t-red: #fb7185; --t-blue: #818cf8; 
+}
+
+body.theme-bioluminescent .app-container {
+    background-color: var(--panel-bg);
+    border: 2px solid var(--t-cyan); 
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
+}
+
+body.theme-bioluminescent .tab-link { font-family: 'Candara', 'Optima', 'Segoe UI', sans-serif; font-weight: bold; letter-spacing: 1px; }
+body.theme-bioluminescent .tab-link.active { color: var(--t-cyan); border-color: var(--t-purple); border-bottom-color: var(--panel-bg); }
+body.theme-bioluminescent .input-group { background-color: rgba(20, 24, 16, 0.4); box-shadow: none; }
+body.theme-bioluminescent .submit-btn { border: 2px solid var(--t-cyan); background-color: rgba(123, 79, 182, 0.6); color: var(--text-main); }
+body.theme-bioluminescent .level-badge { background: rgba(18, 8, 31, 0.8); border: 2px solid var(--t-cyan); color: var(--t-cyan); box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.2); }
+body.theme-bioluminescent .xp-bar-background { border-color: var(--t-purple); background-color: var(--bg-dark); }
+body.theme-bioluminescent .xp-bar-fill { background-color: var(--t-cyan); }
+body.theme-bioluminescent .day-header { background: rgba(18, 8, 31, 0.6); }
+body.theme-bioluminescent .chart-container { background-color: rgba(18, 8, 31, 0.8); border-color: var(--t-purple); box-shadow: inset 0 0 10px rgba(192, 132, 252, 0.2); }
+body.theme-bioluminescent #main-avatar-img, body.theme-bioluminescent #setup-char-img { border-color: var(--t-purple) !important; box-shadow: 0 0 15px rgba(192, 132, 252, 0.5) !important; }
