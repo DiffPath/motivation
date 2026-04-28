@@ -1,1 +1,366 @@
 
+/* ==========================================================================
+   BOSS FIGHT UI STYLING
+   ==========================================================================
+   All boss-battle styles live here so they can be easily tweaked or removed.
+   The styles all assume the existing encounter-panel container, and they
+   reuse the project's CSS variables (--accent-color, --text-dim, etc.).
+   ========================================================================== */
+
+/* ---- Initial encounter prompt ----------------------------------------- */
+.boss-encounter-card {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.35), inset 0 0 30px rgba(239, 68, 68, 0.05);
+    max-width: 600px;
+}
+
+.boss-portrait-large {
+    width: 120px;
+    height: 120px;
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+.boss-warning-banner {
+    display: inline-block;
+    background: #ef4444;
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 4px;
+    letter-spacing: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+    animation: boss-banner-pulse 1.6s ease-in-out infinite;
+}
+@keyframes boss-banner-pulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
+    50%      { box-shadow: 0 0 22px rgba(239, 68, 68, 0.9); }
+}
+
+/* ---- The battle room (replaces battle-arena layout for bosses) ------- */
+.boss-battle-room {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+        radial-gradient(ellipse at top, rgba(127, 29, 29, 0.18) 0%, transparent 60%),
+        rgba(15, 23, 42, 0.97);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    padding: 18px 22px;
+    z-index: 300;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.boss-battle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+.boss-battle-title {
+    color: #ef4444;
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+}
+.boss-battle-round {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ---- Stage: [you] [boss] [ally] -------------------------------------- */
+.boss-stage {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 16px;
+}
+
+.boss-vs-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.05);
+}
+.boss-portrait-wrap {
+    width: 160px;
+    height: 160px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #ef4444;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    image-rendering: pixelated;
+}
+.boss-portrait-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+.boss-hp-row,
+.boss-stats-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin: 4px 0;
+}
+.boss-hp-bg {
+    width: 100%;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 7px;
+    overflow: hidden;
+    margin: 4px 0 8px 0;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.boss-hp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #b91c1c, #ef4444);
+    transition: width 0.5s ease-out;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* ---- Player / ally combatant cards ---------------------------------- */
+.boss-combatant-card {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.boss-combatant-card.is-self  { border-color: var(--accent-color); }
+.boss-combatant-card.is-ally  { border-color: #10b981; }
+.boss-combatant-card.is-spirit {
+    border-style: dashed;
+    background: rgba(168, 85, 247, 0.08);
+    box-shadow: inset 0 0 18px rgba(168, 85, 247, 0.15);
+}
+.boss-combatant-empty {
+    border-style: dashed;
+    opacity: 0.7;
+}
+
+.boss-combatant-name {
+    color: var(--text-main);
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+.boss-combatant-card.is-self  .boss-combatant-name { color: var(--accent-color); }
+.boss-combatant-card.is-ally  .boss-combatant-name { color: #10b981; }
+
+.boss-combatant-portrait {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.boss-combatant-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+}
+.boss-combatant-card.is-spirit .boss-combatant-portrait img {
+    opacity: 0.4;
+    filter: grayscale(0.6) hue-rotate(260deg);
+}
+.spirit-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #d8b4fe;
+    font-size: 2rem;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+    background: rgba(15, 23, 42, 0.4);
+    pointer-events: none;
+    animation: spirit-float 2.4s ease-in-out infinite;
+}
+@keyframes spirit-float {
+    0%, 100% { transform: translateY(0); opacity: 0.85; }
+    50%      { transform: translateY(-3px); opacity: 1; }
+}
+
+.boss-combatant-bar-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+.boss-combatant-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 3px 0;
+}
+.boss-combatant-bar-fill { height: 100%; transition: width 0.3s ease; }
+.boss-combatant-bar-fill.hp { background: linear-gradient(90deg, #047857, #10b981); }
+.boss-combatant-bar-fill.en { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+
+.boss-combatant-stats {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+/* ---- Phase body & action row ---------------------------------------- */
+.boss-phase-body {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 12px;
+    margin-top: 4px;
+}
+.boss-phase-banner {
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin: 0 16px 6px 16px;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+}
+.boss-action-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+.boss-attack-btn {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #fff !important;
+    min-width: 200px;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.boss-attack-btn:hover:not([disabled]) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 24px rgba(239, 68, 68, 0.6);
+}
+.boss-attack-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ---- Battle log ------------------------------------------------------ */
+.boss-log {
+    margin-top: 14px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 14px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+.boss-log-title {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.boss-log-entry {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.boss-log-entry:last-child { border-bottom: none; }
+
+/* ---- Victory & defeat cards ----------------------------------------- */
+.boss-victory-card {
+    border-color: #fcd34d !important;
+    box-shadow: 0 0 40px rgba(252, 211, 77, 0.4);
+    max-width: 600px;
+}
+.boss-defeat-card {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.35);
+    max-width: 600px;
+}
+.boss-reward-card {
+    margin: 18px auto 0;
+    max-width: 380px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+}
+
+/* ---- Resume button on the Adventure HUD ----------------------------- */
+.boss-resume-btn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, #b91c1c, #ef4444);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+    animation: boss-resume-pulse 1.8s ease-in-out infinite;
+}
+.boss-resume-btn:hover { filter: brightness(1.1); }
+@keyframes boss-resume-pulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+    50%      { box-shadow: 0 0 22px rgba(239, 68, 68, 0.8); }
+}
+
+/* ---- Mobile-ish stacking -------------------------------------------- */
+@media (max-width: 800px) {
+    .boss-stage {
+        grid-template-columns: 1fr;
+    }
+    .boss-portrait-wrap {
+        width: 130px;
+        height: 130px;
+    }
+}
