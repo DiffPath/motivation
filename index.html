@@ -1,289 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life Quest: Habit Builder</title>
+    <title>Motivation RPG</title>
     <link rel="stylesheet" href="game.css">
+    <link rel="stylesheet" href="boss-fight.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-<div id="setup-screen" class="app-container hidden">
-        <div style="text-align: center; margin-bottom: 15px;">
-            <h1 style="color: var(--t-yellow);">Begin Your Journey</h1>
-            <p style="color: var(--text-muted); margin: 0;">Who will you be in this world?</p>
-        </div>
-        
-        <div class="input-grid" style="margin-bottom: 20px;">
-            <div class="input-group" style="border-left: 4px solid var(--t-green);">
-                <div class="input-details" style="width: 100%;">
-                    <label for="char-name">Character Name</label>
-                    <input type="text" id="char-name" placeholder="Enter name..." style="width: 100%; margin-top: 8px; text-align: left; box-sizing: border-box;">
-                </div>
-            </div>
 
-            <div class="input-group" style="border-left: 4px solid var(--t-purple);">
-                <div class="input-details" style="width: 100%;">
-                    <label for="setup-theme-select">Realm Theme</label>
-                    <select id="setup-theme-select" onchange="changeTheme(this.value)" style="width: 100%; margin-top: 8px; padding: 10px; background: var(--bg-dark); color: var(--text-main); border: 2px solid var(--grid-line); border-radius: 4px; font-family: inherit; font-size: 1rem; cursor: pointer;">
-                        <option value="fantasy">Epic Quest (Fantasy)</option>
-                        <option value="bioluminescent">Mystic Woods (Bioluminescent)</option>
-                        <option value="tetris">Retro Arcade (Tetris)</option>
-                    </select>
-                </div>
-            </div>
+<body class="theme-modern">
 
-            <div class="input-group" style="border-left: 4px solid var(--t-cyan); flex-direction: column; align-items: flex-start;">
-                <div class="input-details" style="width: 100%;">
-                    <label for="char-type">Familiar / Class</label>
-                    <select id="char-type" onchange="previewStats()" style="width: 100%; margin-top: 8px; padding: 10px; background: var(--bg-dark); color: var(--text-main); border: 2px solid var(--grid-line); border-radius: 4px; font-family: inherit; font-size: 1rem;">
-                        <option value="Black Cat">Black Cat</option>
-                        <option value="Rock Hyrax">Rock Hyrax</option>
-                        <option value="Earthworm">Earthworm</option>
-                        <option value="Gray Wolf">Gray Wolf</option>
-                        <option value="Frog">Frog</option>
-                    </select>
-                </div>
+    <div id="welcome-screen">
+        <div class="welcome-card">
+            <h1>Awaken, adventurer!</h1>
+            <p>Your journey begins now. Who do you want to be on the path to becoming a better you?</p>
 
-                <div style="width: 100%; text-align: center; margin-top: 10px;">
-                    <img id="setup-char-img" src="" alt="Character Preview" style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--t-yellow); object-fit: cover; background-color: var(--bg-dark);">
-                </div>
-                
-                <div id="stat-preview" style="width: 100%; margin-top: 10px; padding-top: 10px; border-top: 2px dashed var(--grid-line); font-family: monospace; font-size: 0.95rem; color: var(--text-muted);">
-                </div>
-            </div>
-        </div>
-        
-        <button class="submit-btn" onclick="startAdventure()">Embark on Quest</button>
-    </div>
-
-    <div id="main-app" class="app-container hidden">
-        <header class="player-card">
-            
-            <div class="profile-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: var(--panel-bg); padding: 15px; border-radius: 4px; box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.05);">
-                <div style="position: relative;">
-                    <img id="main-avatar-img" src="" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--t-cyan); object-fit: cover;">
-                </div>
-                <div style="flex-grow: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <h2 id="header-player-name" style="margin: 0 0 5px 0; font-size: 1.3rem; color: var(--text-main);">Hero Name</h2>
-                        <span id="level-display" style="color: var(--t-yellow); font-weight: bold; font-size: 1.1rem;">Level 1</span>
-                    </div>
-                    
-                    <div class="xp-bar-container" style="background: #000; height: 10px; border-radius: 5px; margin-bottom: 5px; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.8);">
-                        <div id="xp-bar" style="background: var(--t-green); height: 100%; border-radius: 5px; width: 0%; transition: width 0.3s;"></div>
-                    </div>
-                    <div id="xp-text" style="font-size: 0.8rem; margin-bottom: 8px; color: var(--text-muted); text-align: right;">0 / 100 XP</div>
-                    
-                    <div id="header-mini-stats" style="display: flex; gap: 10px; font-family: monospace; font-size: 0.85rem;">
+            <form id="character-creator-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="input-group">
+                            <label>Enter Your Name</label>
+                            <input type="text" id="cc-name" class="uniform-input" placeholder="Hero's Name" required>
                         </div>
+
+                        <div class="input-group">
+                            <label>Choose Your Reality (Theme)</label>
+                            <select id="cc-theme" class="uniform-input theme-selector">
+                                <option value="theme-modern">Modern Dark</option>
+                                <option value="theme-high-contrast">High Contrast</option>
+                                <option value="theme-retro">Retro Terminal</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Choose Your Path</label>
+                            <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0 0 12px 0;">This determines which activities are tracked and rewarded each day.</p>
+                            <div class="path-selector" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <label class="path-card" id="path-card-original" style="cursor:pointer; border: 2px solid var(--accent-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+                                    <input type="radio" name="activity-group" id="group-original" value="original" style="display:none;" checked>
+                                    <span style="font-size: 1.5rem;">⚽</span>
+                                    <strong style="color: var(--text-main); font-size: 0.95rem;">Sportsballer's Path</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Exercise · Work · Chores · Reading · Socializing · To-Dos</span>
+                                </label>
+                                <label class="path-card" id="path-card-wellness" style="cursor:pointer; border: 2px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+                                    <input type="radio" name="activity-group" id="group-wellness" value="wellness" style="display:none;">
+                                    <span style="font-size: 1.5rem;">🌿</span>
+                                    <strong style="color: var(--text-main); font-size: 0.95rem;">Wellness Path</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-dim);">Journaling · Exercise · Hobbies · Chores · Water · To-Dos</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Choose Your Origin</label>
+                        <div class="character-carousel">
+                            <button type="button" class="carousel-nav" id="prev-char"><i class="fas fa-chevron-left"></i></button>
+                            <div class="carousel-content">
+                                <div id="carousel-img" style="margin: 0 auto; border-radius: 8px;"></div>
+                                <h3 id="carousel-name">Black Cat</h3>
+                                <div class="character-stats">
+                                    <div class="stat-badge"><span>STR</span> <span id="stat-str">4</span></div>
+                                    <div class="stat-badge"><span>DEF</span> <span id="stat-def">3</span></div>
+                                    <div class="stat-badge"><span>VIT</span> <span id="stat-vit">4</span></div>
+                                    <div class="stat-badge"><span>INT</span> <span id="stat-int">8</span></div>
+                                    <div class="stat-badge"><span>END</span> <span id="stat-end">5</span></div>
+                                </div>
+                            </div>
+                            <button type="button" class="carousel-nav" id="next-char"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <input type="hidden" id="cc-class-selected" value="Black Cat">
+                    </div>
+                </div>
+                <div>
+                                        <button type="submit" class="submit-btn start-btn uniform-input">Begin Journey</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <nav id="sidebar">
+            <div class="profile-mini">
+                <div class="avatar-placeholder" id="sidebar-portrait"></div>
+                <div class="user-info">
+                    <span class="username"></span>
+                    <span class="level"></span>
                 </div>
             </div>
-            
-            <div id="level-up-message" class="hidden">🎉 Level Up! Keep up the great work! 🎉</div>
-        </header>
 
-<main>
-<div class="tab-navigation">
-    <button class="tab-link active" onclick="switchTab(event, 'tab-tasks')">Activity Log</button>
-    <button class="tab-link" onclick="switchTab(event, 'tab-adventure')">Adventure</button>
-    <button class="tab-link" onclick="switchTab(event, 'tab-stats-hub')">Stats & Info</button>
-    <button class="tab-link" onclick="switchTab(event, 'tab-social')">Social</button>
-    <button class="tab-link" onclick="switchTab(event, 'tab-settings')">Settings</button>
-</div>
-
-    <div id="tab-tasks" class="tab-content active">
-<section class="habits-section">
-    <h2>Log Your Time</h2>
-    <h3 id="current-date-display" style="color: var(--t-cyan); margin-top: -10px; margin-bottom: 15px; font-family: monospace; text-transform: uppercase;"></h3>
-    
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
-        Enter the minutes spent on each activity. Leave blank if you didn't do it today.
-    </p>
-    
-<div class="input-grid">
-    <div class="input-group task-read">
-        <span class="icon">📖</span>
-        <div class="input-details">
-            <label for="min-read">Read a Book</label>
-            <span class="multiplier">1 XP / min</span>
-        </div>
-        <input type="number" id="min-read" min="0" placeholder="0">
-        <span class="min-label">min</span>
-    </div>
-
-    <div class="input-group task-chores">
-        <span class="icon">🧹</span>
-        <div class="input-details">
-            <label for="min-chores">Do Chores</label>
-            <span class="multiplier">1.5 XP / min</span>
-        </div>
-        <input type="number" id="min-chores" min="0" placeholder="0">
-        <span class="min-label">min</span>
-    </div>
-
-    <div class="input-group task-relax">
-        <span class="icon">🎬</span>
-        <div class="input-details">
-            <label for="min-relax">Movie</label>
-            <span class="multiplier">0.5 XP / min</span>
-        </div>
-        <input type="number" id="min-relax" min="0" placeholder="0">
-        <span class="min-label">min</span>
-    </div>
-
-    <div class="input-group task-exercise">
-        <span class="icon">🚴</span>
-        <div class="input-details">
-            <label for="min-exercise">Exercise</label>
-            <span class="multiplier">2 XP / min</span>
-        </div>
-        <input type="number" id="min-exercise" min="0" placeholder="0">
-        <span class="min-label">min</span>
-    </div>
-</div>
-
-    <button class="submit-btn" onclick="submitActivities()">Log Activities</button>
-</section>
-    </div>
-
-    <div id="tab-adventure" class="tab-content">
-    <section class="habits-section">
-        <h2>The Wilds</h2>
-        <div style="background: var(--panel-bg); padding: 15px; border-radius: 4px; box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.05);">
-            
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-family: monospace; font-size: 1.1rem;">
-                <span style="color: var(--t-green);">HP: <span id="adv-hp">--</span> / <span id="adv-max-hp">--</span></span>
-                <span style="color: var(--t-yellow);">⚡ Energy: <span id="adv-energy">--</span> / <span id="adv-max-energy">--</span></span>
-                <span id="adv-status" style="color: var(--text-muted);">Status: Exploring</span>
-            </div>
-
-            <div id="adventure-log" style="height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border: 2px solid var(--grid-line); border-radius: 4px; font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                <div style="color: var(--text-muted);">You stand at the edge of the wilderness. What will you do?</div>
-            </div>
-
-            <div id="adv-explore-controls" style="display: flex; gap: 10px;">
-                <button onclick="advExplore()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem;">Explore</button>
-                <button onclick="advRest()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem; background-color: var(--t-blue);">Rest (Heal)</button>
-            </div>
-
-            <div id="adv-combat-controls" style="display: none; gap: 10px;">
-                <button onclick="advAttack()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem; background-color: var(--t-red);">Attack</button>
-                <button onclick="advFlee()" class="submit-btn" style="flex: 1; padding: 12px; font-size: 1rem; background-color: var(--t-purple);">Flee</button>
-            </div>
-
-        </div>
-    </section>
-</div>
-
-<div id="tab-stats-hub" class="tab-content">
-        <div class="sub-tab-navigation" style="display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 1px solid var(--grid-line); padding-bottom: 10px;">
-        <button class="sub-tab-link active" onclick="switchSubTab(event, 'sub-attributes')">Attributes</button>
-        <button class="sub-tab-link" onclick="switchSubTab(event, 'sub-charts')">Charts</button>
-        <button class="sub-tab-link" onclick="switchSubTab(event, 'sub-history')">Activity Log</button>
-        <button class="sub-tab-link" onclick="switchSubTab(event, 'sub-records')">Records</button>
-    </div>
-
-    <div id="sub-attributes" class="sub-tab-content" style="display: block;">
-        <section class="stats-section">
-            <div style="background-color: var(--panel-bg); padding: 15px; border-radius: 4px;">
-                <p style="color: var(--t-yellow); font-weight: bold; margin: 0 0 15px 0; text-align: center; font-family: inherit;">
-                    Unallocated Points: <span id="unallocated-points-display" style="font-size: 1.4rem;">0</span>
-                </p>
-                <div id="stats-allocation-container" style="font-family: monospace; font-size: 1rem; color: var(--text-muted); overflow-x: auto;"></div>
-            </div>
-        </section>
-    </div>
-
-    <div id="sub-charts" class="sub-tab-content" style="display: none;">
-        <div class="chart-container" style="margin-bottom: 20px;">
-            <canvas id="dailyChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="cumulativeChart"></canvas>
-        </div>
-    </div>
-
-    <div id="sub-history" class="sub-tab-content" style="display: none;">
-        <ul id="activity-log" style="max-height: 300px; overflow-y: auto; background-color: var(--panel-bg); padding: 15px; border-radius: 4px;">
+            <ul class="nav-tabs">
+                <li class="nav-item active" data-tab="adventure">
+                    <i class="fas fa-map-marked-alt"></i> <span>Adventure</span>
+                </li>
+                <li class="nav-item" data-tab="activities">
+                    <i class="fas fa-fist-raised"></i> <span>Activities</span>
+                </li>
+                <li class="nav-item" data-tab="character">
+                    <i class="fas fa-user-shield"></i> <span>Character</span>
+                    <span class="nav-badge" id="character-tab-badge"></span>
+                </li>
+                <li class="nav-item" data-tab="stats">
+                    <i class="fas fa-chart-line"></i> <span>Stats</span>
+                </li>
+                <li class="nav-item" data-tab="friends">
+                    <i class="fas fa-users"></i> <span>Friends</span>
+                </li>
+                <li class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </li>
             </ul>
-    </div>
 
-<div id="sub-records" class="sub-tab-content" style="display: none;">
-        <div style="background-color: var(--panel-bg); padding: 15px; border-radius: 4px; display: grid; gap: 15px;">
-            
-            <div style="border-bottom: 1px dashed var(--grid-line); padding-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="color: var(--t-yellow);">Best Daily XP:</span>
-                    <span id="record-max-xp" style="font-weight: bold; color: var(--text-main);">0 XP</span>
+            <div class="sidebar-footer">
+                <small>v2.0.0 Phoenix</small>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <section id="adventure" class="tab-content active">
+                <div class="adventure-header" style="text-align: center; margin-bottom: 20px;">
+                    <h1>The Whispering Woods</h1>
                 </div>
-                <div id="record-max-xp-details" style="font-size: 0.85rem; color: var(--text-muted); padding-left: 10px; border-left: 2px solid var(--t-yellow); display: none;">
+
+                <div class="adventure-controls"
+                    style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; color: var(--text-dim);">
+                    <label><i class="fas fa-search"></i> Zoom:</label>
+                    <button class="zoom-btn" id="zoom-out"><i class="fas fa-minus"></i></button>
+                    <input type="range" id="zoom-slider" min="40" max="160" value="100">
+                    <button class="zoom-btn" id="zoom-in"><i class="fas fa-plus"></i></button>
+                    <span style="margin-left: 20px;"><i class="fas fa-keyboard"></i> WASD / Arrows to move</span>
                 </div>
-            </div>
 
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
-                <span style="color: var(--t-cyan);">Most Reading (Day):</span>
-                <span id="record-max-read" style="font-weight: bold; color: var(--text-main);">0 min</span>
-            </div>
+                <div id="adventure-layout-wrapper">
 
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
-                <span style="color: var(--t-green);">Most Exercise (Day):</span>
-                <span id="record-max-exercise" style="font-weight: bold; color: var(--text-main);">0 min</span>
-            </div>
+                    <div class="adventure-viewport" id="viewport-container">
+                        <canvas id="game-canvas"></canvas>
+                        <div id="encounter-panel" class="encounter-panel"></div>
+                    </div>
 
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
-                <span style="color: var(--t-purple);">Most Chores (Day):</span>
-                <span id="record-max-chores" style="font-weight: bold; color: var(--text-main);">0 min</span>
-            </div>
+                    <div id="adventure-sidebar">
 
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--grid-line); padding-bottom: 5px;">
-                <span style="color: var(--t-blue);">Most Relaxing (Day):</span>
-                <span id="record-max-relax" style="font-weight: bold; color: var(--text-main);">0 min</span>
-            </div>
+                        <div class="sidebar-panel" id="status-update-window">
+                            <h3 class="sidebar-header">Live Status</h3>
+                            <div id="status-content">
+                            </div>
+                        </div>
 
-        </div>
-    </div>
-</div>
+                        <div class="sidebar-panel" style="flex-grow: 1; display: flex; flex-direction: column;">
+                            <h3 class="sidebar-header">Realm Chat</h3>
 
-    <div id="tab-social" class="tab-content">
-        <section class="habits-section">
-            <h2>Your Party</h2>
-            <div style="background: var(--panel-bg); padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-                <p style="color: var(--text-muted); margin-top: 0;">Add a companion to track their progress:</p>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="friend-search" placeholder="Character Name..." style="flex-grow: 1; margin: 0;">
-                    <button onclick="addFriend()" class="submit-btn" style="padding: 10px; font-size: 0.9rem; width: auto;">Add Friend</button>
+                            <div id="chat-messages"
+                                style="flex-grow: 1; height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                            </div>
+
+                            <div class="chat-input-wrapper">
+                                <input type="text" id="chat-input" placeholder="Message the realm..." maxlength="120"
+                                    autocomplete="off">
+                                <button id="chat-send" class="chat-btn"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="friends-list-container" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-            </div>
-        </section>
-    </div>
-    <div id="tab-settings" class="tab-content">
-        <section class="settings-section">
-            <h2>App Settings</h2>
-            
-            <div class="setting-group" style="margin-top: 20px;">
-                <label for="theme-select" style="font-size: 1.1rem; font-weight: bold; margin-right: 15px;">Theme:</label>
-                <select id="theme-select" onchange="changeTheme(this.value)" style="width: 100%; margin-top: 10px; padding: 10px; background: var(--bg-dark); color: var(--text-main); border: 2px solid var(--grid-line); border-radius: 4px; font-family: inherit; font-size: 1rem; cursor: pointer;">
-                    <option value="fantasy">Epic Quest (Fantasy)</option>
-                    <option value="bioluminescent">Mystic Woods (Bioluminescent)</option>
-                    <option value="tetris">Retro Arcade (Tetris)</option>
-                </select>
-            </div>
-            
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 20px;">
-                More settings coming soon!
-            </p>
-        </section>
-    </div>
-</main>
+            <section id="activities" class="tab-content">
+                <div class="adventure-header">
+                    <h1>Daily Activity Log</h1>
+                </div>
 
-    </div>
+                <div class="activities-layout">
 
+                    <div class="activity-form-card">
+
+                        <div class="calendar-header"
+                            style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+                            <button type="button" id="act-prev-btn" class="cal-nav-btn"><i
+                                    class="fas fa-chevron-left"></i></button>
+                            <h2 id="act-date-display" style="font-size: 1.2rem; min-width: 150px; text-align: center;">
+                                Today</h2>
+                            <button type="button" id="act-next-btn" class="cal-nav-btn" style="visibility: hidden;"><i
+                                    class="fas fa-chevron-right"></i></button>
+                        </div>
+
+                        <form id="daily-activity-form">
+                            <div class="activity-grid" id="activity-grid-container">
+                                <!-- Dynamically populated based on chosen path -->
+                            </div>
+                            <button type="submit" class="submit-btn">Save Progress</button>
+                        </form>
+                    </div>
+
+                    <div class="activity-log-sidebar">
+                        <h3>Recent History</h3>
+                        <div id="activity-history-log">
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section id="character" class="tab-content">
+                <div class="adventure-header">
+                    <h1>Hero Profile</h1>
+                </div>
+
+                <!-- Character Sub-Tab Navigation -->
+                <div class="char-subtab-nav">
+                    <button class="char-subtab-btn active" id="char-btn-gear" onclick="switchCharTab('gear')">
+                        <i class="fas fa-shield-alt"></i> Stats &amp; Gear
+                    </button>
+                    <button class="char-subtab-btn" id="char-btn-quest" onclick="switchCharTab('quest')">
+                        📜 Quest Log
+                    </button>
+                </div>
+
+                <!-- Sub-View: Stats & Gear -->
+                <div id="char-view-gear" class="char-sub-view active">
+                    <div class="character-container">
+
+                        <div class="character-left-column">
+                            <div class="equipment-layout">
+                                <div class="equip-slot" id="slot-weapon" style="grid-area: weapon;"
+                                    onclick="unequipItem('weapon')"><i class="fas fa-sword"></i> Weapon</div>
+                                <div class="equip-slot" id="slot-armor" style="grid-area: armor;"
+                                    onclick="unequipItem('armor')"><i class="fas fa-shield"></i> Armor</div>
+                                <div class="equip-slot" id="slot-accessory" style="grid-area: accessory;"
+                                    onclick="unequipItem('accessory')"><i class="fas fa-ring"></i> Accessory</div>
+                                <div class="character-portrait" id="char-tab-portrait">
+                                </div>
+                            </div>
+
+                            <div class="inventory-section">
+                                <div class="inventory-header">
+                                    <h3>Inventory</h3>
+                                    <button class="inv-delete-btn" id="delete-mode-btn" onclick="toggleDeleteMode()">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </div>
+                                <div class="inventory-sort-bar">
+                                    <span class="sort-label">Sort:</span>
+                                    <button class="sort-btn active" id="sort-btn-default" onclick="setInventorySort('default')">Default</button>
+                                    <button class="sort-btn" id="sort-btn-type" onclick="setInventorySort('type')">Type</button>
+                                    <button class="sort-btn" id="sort-btn-stat-desc" onclick="setInventorySort('stat-desc')">Best ↓</button>
+                                    <button class="sort-btn" id="sort-btn-stat-asc" onclick="setInventorySort('stat-asc')">Worst ↑</button>
+                                </div>
+                                <div class="inventory-grid" id="inventory-panel">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-grid" id="character-stats-panel">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Sub-View: Quest Log -->
+                <div id="char-view-quest" class="char-sub-view">
+                    <div id="quest-log-panel">
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="stats" class="tab-content">
+                <div class="adventure-header">
+                    <h1>Chronicles of Progression</h1>
+                </div>
+
+                <div class="stats-toggle-nav">
+                    <button class="stats-tab-btn active" data-target="stats-charts-view">Charts</button>
+                    <button class="stats-tab-btn" data-target="stats-records-view">Hall of Records</button>
+                    <button class="stats-tab-btn" data-target="stats-calendar-view">Activity Calendar</button>
+                </div>
+
+                <div id="stats-charts-view" class="stats-sub-view active">
+                    <div class="stats-grid">
+                        <div class="chart-card full-width">
+                            <h3 class="chart-title">Total XP Over Time</h3>
+                            <div class="chart-wrapper"><canvas id="totalXpChart"></canvas></div>
+                        </div>
+
+                        <div class="chart-card full-width">
+                            <h3 class="chart-title">Daily XP Gains</h3>
+                            <div class="chart-wrapper"><canvas id="dailyXpChart"></canvas></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3 class="chart-title">Activity Distribution (Time)</h3>
+                            <div class="chart-wrapper"><canvas id="activityPieChart"></canvas></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3 class="chart-title">XP Sources</h3>
+                            <div class="chart-wrapper"><canvas id="xpSourcePieChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="stats-records-view" class="stats-sub-view">
+                    <div class="records-grid" id="records-container">
+                    </div>
+                </div>
+
+                <div id="stats-calendar-view" class="stats-sub-view">
+                    <div class="calendar-header">
+                        <button id="cal-prev-btn" class="cal-nav-btn" style="visibility: hidden;"><i
+                                class="fas fa-chevron-left"></i></button>
+                        <h2 id="cal-year-display">2026</h2>
+                        <button id="cal-next-btn" class="cal-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+
+                    <div class="calendar-legend">
+                        <span style="color: var(--text-dim); font-size: 0.8rem;">0 XP</span>
+                        <div class="legend-gradient"></div>
+                        <span style="color: var(--text-dim); font-size: 0.8rem;">Max XP</span>
+                    </div>
+
+                    <div class="calendar-year-grid" id="calendar-container">
+                    </div>
+                </div>
+            </section>
+
+            <section id="friends" class="tab-content">
+                <div class="adventure-header">
+                    <h1>Teammates</h1>
+                </div>
+
+                <div class="friends-layout">
+                    <div class="allies-roster">
+                        <div id="friends-grid" class="friends-grid">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings" class="tab-content">
+                <div class="adventure-header">
+                    <h1>Settings</h1>
+                </div>
+                <div class="settings-card">
+                    <div class="setting-group">
+                        <label>Visual Theme</label>
+                        <select id="theme-setting" class="theme-selector">
+                            <option value="theme-modern">Modern Dark</option>
+                            <option value="theme-high-contrast">High Contrast</option>
+                            <option value="theme-retro">Retro Terminal</option>
+                        </select>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="game-data.js"></script>
     <script src="game.js"></script>
+    <script src="boss-fight.js"></script>
+
 </body>
+
 </html>
