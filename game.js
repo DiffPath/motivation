@@ -1764,8 +1764,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 { id: 'act-reading',     key: 'reading',     label: 'Reading',       icon: 'fas fa-book-open',       unit: '1 xp/minute', xpRate: 1 },
                 { id: 'act-work',        key: 'work',        label: 'Work/Productivity',          icon: 'fas fa-briefcase',       unit: '1 xp/minute', xpRate: 1 },
                 { id: 'act-socializing', key: 'socializing', label: 'Socializing',   icon: 'fas fa-users',           unit: '0.5 xp/minute', xpRate: 0.5 },
-                { id: 'act-minortodo',        key: 'minortodo',        label: 'Minor To-Do Items',       icon: 'fas fa-clipboard-check', unit: '10 xp/item',   xpRate: 10 },
-                { id: 'act-majortodo',        key: 'majortodo',        label: 'Major To-Do Items',       icon: 'fas fa-clipboard-check', unit: '40 xp/item',   xpRate: 40 }
+                { id: 'act-minortodo',        key: 'minortodo',        label: 'Minor To-Do Items',       icon: 'fas fa-check-circle',    unit: '10 xp/item',   xpRate: 10 },
+                { id: 'act-majortodo',        key: 'majortodo',        label: 'Major To-Do Items',       icon: 'fas fa-star',            unit: '40 xp/item',   xpRate: 40 }
             ]
         },
         wellness: {
@@ -1774,11 +1774,11 @@ document.addEventListener('DOMContentLoaded', function () {
             activities: [
                 { id: 'act-journaling',  key: 'journaling',  label: 'Journaling',      icon: 'fas fa-pen-nib',         unit: '2 xp/minute', xpRate: 2 },
                 { id: 'act-exercise',    key: 'exercise',    label: 'Exercise',          icon: 'fas fa-running',         unit: '2 xp/minute', xpRate: 3 },
-                { id: 'act-hobbies',     key: 'hobbies',     label: 'Hobbies',           icon: 'fas fa-book-open',       unit: '1 xp/minute', xpRate: 2 },
+                { id: 'act-hobbies',     key: 'hobbies',     label: 'Hobbies',           icon: 'fas fa-palette',         unit: '1 xp/minute', xpRate: 2 },
                 { id: 'act-chores',      key: 'chores',      label: 'Chores',            icon: 'fas fa-broom',           unit: '2 xp/minute', xpRate: 2 },
                 { id: 'act-water',       key: 'water',       label: 'Drinking Water',    icon: 'fas fa-tint',            unit: '10 xp/60 oz', xpRate: 10 },
-                { id: 'act-minortodo',        key: 'minortodo',        label: 'Minor To-Do Items',       icon: 'fas fa-clipboard-check', unit: '10 xp/item',   xpRate: 10 },
-                { id: 'act-majortodo',        key: 'majortodo',        label: 'Major To-Do Items',       icon: 'fas fa-clipboard-check', unit: '40 xp/item',   xpRate: 40 }
+                { id: 'act-minortodo',        key: 'minortodo',        label: 'Minor To-Do Items',       icon: 'fas fa-check-circle',    unit: '10 xp/item',   xpRate: 10 },
+                { id: 'act-majortodo',        key: 'majortodo',        label: 'Major To-Do Items',       icon: 'fas fa-star',            unit: '40 xp/item',   xpRate: 40 }
             ]
         }
     };
@@ -1788,10 +1788,13 @@ document.addEventListener('DOMContentLoaded', function () {
         exercise:    { icon: 'fas fa-running',         unit: 'min' },
         chores:      { icon: 'fas fa-broom',           unit: 'min' },
         reading:     { icon: 'fas fa-book-open',       unit: 'min' },
+        hobbies:     { icon: 'fas fa-palette',         unit: 'min' },
         work:        { icon: 'fas fa-briefcase',       unit: 'min' },
         socializing: { icon: 'fas fa-users',           unit: 'min' },
         movie:       { icon: 'fas fa-film',            unit: 'min' },  // legacy key
         todo:        { icon: 'fas fa-clipboard-check', unit: ''    },
+        minortodo:   { icon: 'fas fa-check-circle',    unit: ''    },
+        majortodo:   { icon: 'fas fa-star',            unit: ''    },
         journaling:  { icon: 'fas fa-pen-nib',         unit: 'min' },
         water:       { icon: 'fas fa-tint',            unit: 'glasses' }
     };
@@ -1807,9 +1810,12 @@ document.addEventListener('DOMContentLoaded', function () {
             (s.exercise    || 0) * 3   +
             (s.chores      || 0) * 2   +
             (s.reading     || 0) * 2   +
+            (s.hobbies     || 0) * 2   +
             (s.work        || 0) * 1   +
             (s.socializing || s.movie || 0) * 0.5 +
             (s.todo        || 0) * 10  +
+            (s.minortodo   || 0) * 10  +
+            (s.majortodo   || 0) * 40  +
             (s.journaling  || 0) * 2   +
             (s.water       || 0) * 5
         ) * weekendMultiplier);
@@ -6258,14 +6264,17 @@ if (!snap.exists()) {
 
         // Build full records object for all known activity keys
         const activityMeta = [
-            { key: 'exercise',    label: 'Exercise',      unit: 'min'    },
-            { key: 'chores',      label: 'Chores',        unit: 'min'    },
-            { key: 'reading',     label: 'Reading',       unit: 'min'    },
-            { key: 'work',        label: 'Work',          unit: 'min'    },
-            { key: 'socializing', label: 'Socializing',   unit: 'min'    },
-            { key: 'journaling',  label: 'Journaling',    unit: 'min'    },
-            { key: 'water',       label: 'Water',         unit: 'glasses'},
-            { key: 'todo',        label: 'To-Do Items',   unit: ''       },
+            { key: 'exercise',    label: 'Exercise',        unit: 'min'    },
+            { key: 'chores',      label: 'Chores',          unit: 'min'    },
+            { key: 'reading',     label: 'Reading',         unit: 'min'    },
+            { key: 'hobbies',     label: 'Hobbies',         unit: 'min'    },
+            { key: 'work',        label: 'Work',            unit: 'min'    },
+            { key: 'socializing', label: 'Socializing',     unit: 'min'    },
+            { key: 'journaling',  label: 'Journaling',      unit: 'min'    },
+            { key: 'water',       label: 'Water',           unit: 'glasses'},
+            { key: 'todo',        label: 'To-Do Items',     unit: ''       },
+            { key: 'minortodo',   label: 'Minor To-Do',     unit: ''       },
+            { key: 'majortodo',   label: 'Major To-Do',     unit: ''       },
         ];
 
         let records = { dailyXp: { val: 0, date: 'N/A' }, weeklyXp: { val: 0, date: 'N/A' } };
