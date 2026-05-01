@@ -221,7 +221,7 @@ const heroClasses = {
     },
     "Frog": {
         name: "Frog",
-        portraitSheet: "https://i.ibb.co/vNPYb50/gpt-image-2-medium-b-Generate-a-10-image-1.png",
+        portraitSheet: "https://i.ibb.co/G371cJYM/1777180515761-019dc835-db2d-73c5-9122-2bb3758e2721-1.png",
         emoji: "🐸",
         stats: { str: 5, def: 4, vit: 5, int: 6, end: 6 },
         sprites: { up: "URL_FROG_UP.png", down: "URL_FROG_DOWN.png", left: "URL_FROG_LEFT.png" }
