@@ -66,7 +66,7 @@ const gameMonsters = {
     'forest_dweller': {
         name: 'Forest Dweller',
         isBoss: false,
-        overworldUrl: 'https://i.imgur.com/pJGcFgm.png',
+        overworldUrl: 'https://i.ibb.co/C5MQDTcV/image-Photoroom.png',
         glow: 'rgba(34, 197, 94, 0.5)',
         battleImg: 'https://i.imgur.com/2o29aov.jpeg',
         allowedZones: ['overworld'],
@@ -77,7 +77,7 @@ const gameMonsters = {
     'glowburrow': {
         name: 'Glowburrow',
         isBoss: false,
-        overworldUrl: 'https://i.imgur.com/pJGcFgm.png',
+        overworldUrl: 'https://i.ibb.co/BVw49s6C/image-Photoroom-1.png',
         glow: 'rgba(34, 197, 94, 0.5)',
         battleImg: 'https://i.imgur.com/PNUqNiP.jpeg', //https://imgur.com/a/nkeCj4e
         allowedZones: ['overworld'],
@@ -88,7 +88,7 @@ const gameMonsters = {
     'pebblin': {
         name: 'Pebblin',
         isBoss: false,
-        overworldUrl: 'https://i.imgur.com/pJGcFgm.png',
+        overworldUrl: 'https://i.ibb.co/gMXJT67D/image.png',
         glow: 'rgba(34, 197, 94, 0.5)',
         battleImg: 'https://i.imgur.com/FxCGSDk.jpeg',  //https://imgur.com/a/nkeCj4e
         allowedZones: ['overworld'],
