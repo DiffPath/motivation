@@ -1,0 +1,814 @@
+/* =============================================================================
+   LAYOUT.CSS
+   Themes, core layout, sidebar, activities form, character tab, welcome screen.
+   ============================================================================= */
+
+/* --- THEME DEFINITIONS --- */
+:root, .theme-modern {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --accent-color: #38bdf8;
+    --text-main: #f1f5f9;
+    --text-dim: #94a3b8;
+    --border-color: #334155;
+    --card-bg: #1e293b;
+    --nav-width: 240px;
+    --transition-speed: 0.2s;
+}
+
+.theme-high-contrast {
+    --bg-primary: #000000;
+    --bg-secondary: #111111;
+    --accent-color: #00ff00;
+    --text-main: #ffffff;
+    --text-dim: #aaaaaa;
+    --border-color: #ffffff;
+    --card-bg: #000000;
+}
+
+.theme-retro {
+    --bg-primary: #0d0208;
+    --bg-secondary: #003b00;
+    --accent-color: #00ff41;
+    --text-main: #00ff41;
+    --text-dim: #008f11;
+    --border-color: #00ff41;
+    --card-bg: #0d0208;
+}
+
+
+/* --- CORE LAYOUT --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+}
+
+#app-container {
+    display: none; /* Changed from flex */
+    height: 100vh;
+    width: 100vw;
+}
+
+#app-container.active {
+    display: flex;
+}
+
+/* --- SIDEBAR --- */
+#sidebar {
+    width: var(--nav-width);
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    z-index: 10;
+}
+
+.profile-mini {
+    padding: 0 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-placeholder {
+    width: 56px;
+    /* height is driven by aspect-ratio set in JS once the portrait sheet loads */
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2px;
+}
+
+.username { font-weight: 700; font-size: 0.95rem; }
+.level { font-size: 0.75rem; color: var(--text-dim); }
+
+.nav-tabs {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-dim);
+    transition: all var(--transition-speed);
+    border-left: 4px solid transparent;
+}
+
+.nav-item i { width: 20px; text-align: center; }
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+.nav-item.active {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-color);
+    border-left-color: var(--accent-color);
+}
+
+.sidebar-footer {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+}
+
+/* --- NAV BADGE (unspent-point dot indicator) --- */
+/* Default: invisible dot, reserves no space */
+.nav-badge {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 0 6px var(--accent-color);
+    margin-left: auto;           /* pushes dot to the right edge of the nav item */
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    flex-shrink: 0;
+}
+
+/* Only show the dot when JS adds .visible */
+.nav-badge.visible {
+    opacity: 1;
+}
+
+/* --- STAT ALLOCATION BUTTONS (+/−) --- */
+.stat-alloc-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-alloc-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, box-shadow 0.15s ease, background 0.15s ease;
+    flex-shrink: 0;
+}
+
+.stat-alloc-btn:active {
+    transform: scale(0.88);
+}
+
+.stat-alloc-btn.plus {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.stat-alloc-btn.plus:hover:not(:disabled) {
+    background: rgba(56, 189, 248, 0.28);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+.stat-alloc-btn.plus:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.stat-alloc-btn.minus {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.stat-alloc-btn.minus:hover {
+    background: rgba(239, 68, 68, 0.25);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+/* Stat value turns accent when it has un-saved pending allocations */
+.stat-val-pending {
+    color: #fbbf24 !important;       /* warm gold — clearly "staged but unsaved" */
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* --- SAVE ATTRIBUTES BUTTON --- */
+.save-attrs-btn {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(2,132,199,0.15));
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.15);
+}
+
+.save-attrs-btn:hover {
+    background: linear-gradient(135deg, rgba(56,189,248,0.30), rgba(2,132,199,0.25));
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.35);
+}
+
+.save-attrs-btn:active {
+    transform: scale(0.97);
+}
+
+/* --- MAIN CONTENT --- */
+#main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+    background: var(--bg-primary);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Specifically allows the adventure map to break out of the standard tab width */
+#adventure.tab-content {
+    max-width: 100vw; 
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    margin-bottom: 15px; /* FIXED: Reduced from 30px to pull content up */
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.placeholder-card, .settings-card, .activity-form-container {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+/* --- ACTIVITIES FORM --- */
+.activity-grid { 
+    display: grid;
+    /* Creates two equal, flexible columns that are allowed to shrink */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); 
+    gap: 20px; /* This creates the perfect middle gap between the two columns */
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Adds a little breathing room between the label and the input box */
+    width: 100%;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-group label i {
+    color: var(--accent-color);
+}
+
+.input-group input {
+    padding: 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--accent-color);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px; /* ADD THIS LINE */
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* --- STATS LOG --- */
+#activity-history-log {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Tighter spacing between days */
+    margin-top: 15px;
+}
+
+.log-entry {
+    background: transparent; /* Removed chunky background */
+    border-bottom: 1px dashed var(--border-color); /* Subtle divider between days */
+    padding-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Ultra-tight spacing between header and activities */
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.log-date {
+    font-weight: bold;
+    color: var(--text-main); /* Neutral date so the emojis pop */
+    font-size: 0.9rem;
+}
+
+.log-stats-flex {
+    display: flex;
+    flex-direction: column; /* Forces activities into a vertical list */
+    gap: 2px; /* Extremely tight gap to save vertical space */
+}
+
+.log-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 2px 0;
+    background: transparent; /* Removes the pill background */
+}
+
+/* Matches the emoji style from your input form */
+.log-stat-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.log-stat-label i {
+    color: var(--accent-color);
+    width: 16px;
+    text-align: center;
+}
+
+.log-stat-time {
+    font-weight: 700;
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace; /* RPG number aesthetic */
+}
+
+.no-data-msg {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-dim);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+/* --- CHARACTER TAB STYLES --- */
+.character-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr; /* FIXED: Splits the width exactly 50/50 */
+    gap: 20px;
+    align-items: start;
+}
+
+.equipment-layout {
+    display: grid;
+    grid-template-areas: 
+        "weapon portrait"
+        "armor portrait"
+        "accessory portrait";
+    /* Portrait column needs an explicit width — `1fr` collapses to 0 inside a
+       `width: fit-content` parent because there is no leftover space to flex into.
+       That's what made the portrait render as a hairline / single-pixel border. */
+    grid-template-columns: 130px 216px;
+    /* rows size to their content (equip slots); portrait uses align-self:start */
+    grid-template-rows: repeat(3, auto);
+    gap: 12px;
+    align-items: start;
+    /* Center the equipment block horizontally over the inventory below */
+    width: fit-content;
+    margin: 0 auto;
+}
+
+
+
+.equip-slot {
+    width: 120px;
+    height: 110px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center; /* FIXED: Forces all multi-line text to center align */
+    gap: 10px;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    border-radius: 8px;
+    transition: all var(--transition-speed);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.equip-slot i { font-size: 1.5rem; }
+
+.equip-slot:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    cursor: pointer;
+}
+
+.character-portrait {
+    grid-area: portrait;
+    background: var(--bg-primary);
+    border: 2px solid var(--accent-color);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    /* Width is bounded so the portrait never sprawls across a wide 1fr column.
+       Fallback aspect-ratio: 1 gives the container real height immediately so the
+       absolutely-positioned sprite image (height: 200%) is not resolving against 0.
+       JS overrides this with the exact sprite-cell ratio once the sheet has loaded. */
+    width: 100%;
+    max-width: 216px;
+    aspect-ratio: 1;
+    align-self: start;
+}
+
+/* --- FRIEND CARD SUB-TABS (underline style, same as character/stats) --- */
+.friend-subtab-nav {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    padding-bottom: 0;
+    flex-wrap: wrap;
+}
+
+.friend-subtab-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: bold;
+    letter-spacing: 0.4px;
+    transition: all var(--transition-speed);
+    margin-bottom: -1px;
+    border-radius: 4px 4px 0 0;
+    white-space: nowrap;
+}
+
+.friend-subtab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.friend-subtab-btn.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+    background: rgba(56, 189, 248, 0.06);
+}
+
+.friend-subtab-view {
+    display: none;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.friend-subtab-view.active {
+    display: block;
+}
+
+/* Friend chart grid — 2 wide on top, 2 narrow on bottom */
+.friend-chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.friend-chart-grid .chart-card {
+    margin: 0;
+}
+
+.friend-chart-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.stat-grid {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stat-row:last-child { border-bottom: none; }
+
+.stat-val {
+    color: var(--accent-color);
+    font-weight: 700;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.buff-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    border: 1px solid #34d399;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-right: 10px;
+}
+
+/* --- SETTINGS --- */
+select {
+    padding: 10px;
+    background: var(--bg-primary);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+}
+
+/* Activities Layout */
+.activities-layout {
+    display: grid;
+    /* This forces an absolute 50/50 split regardless of content width */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); 
+    gap: 30px;
+    align-items: start;
+}
+
+.activity-form-card {
+    background: var(--bg-secondary);
+    padding: 25px; /* Standardized padding */
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    width: 100%; /* Forces it to fill its grid column */
+    box-sizing: border-box;
+}
+
+.activity-log-sidebar {
+    background: var(--bg-secondary);
+    padding: 25px; /* Updated from 20px to perfectly match the form card */
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    max-height: 600px; /* Slightly increased so it doesn't clip content too early */
+    overflow-y: auto;
+    width: 100%; /* Forces it to fill its grid column */
+    box-sizing: border-box;
+}
+
+.activity-log-sidebar h3 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px; /* Gives it breathing room above the calendar nav */
+}
+
+.log-entry {
+    background: var(--bg-primary);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.log-date { font-weight: bold; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+.log-stats { font-size: 0.75rem; color: var(--text-dim); line-height: 1.4; }
+
+/* --- WELCOME SCREEN --- */
+#welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-primary);
+    z-index: 100;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+}
+
+#welcome-screen.active {
+    display: flex;
+}
+
+.welcome-card {
+    background: var(--bg-secondary);
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    width: 90%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.welcome-card h1 { margin-bottom: 10px; }
+.welcome-card p { color: var(--text-dim); margin-bottom: 30px; }
+
+@media (max-width: 600px) {
+    .welcome-card {
+        padding: 24px;
+    }
+    .welcome-card form > div {
+        grid-template-columns: 1fr !important;
+    }
+}
+#character-creator-form { text-align: left; }
+
+
+.char-option input { display: none; }
+
+.char-option input:checked + .char-card {
+    border-color: var(--accent-color);
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-color);
+}
+
+.start-btn { margin-top: 10px; padding: 15px; font-size: 1.1rem; }
+
+/* --- WELCOME SCREEN UNIFIED HEIGHTS --- */
+.uniform-input {
+    width: 100%;
+    height: 50px; /* Locks text input, select, and button to the exact same height */
+    padding: 0 15px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.start-btn {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- CHARACTER SELECTION AVATARS --- */
+
+
+.char-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top;
+    background-color: var(--bg-secondary);
+    image-rendering: auto;
+}
+
+/* --- CHARACTER SELECTION CAROUSEL --- */
+.character-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    height: 400px; /* Gives enough room for image and stats without scrolling */
+}
+
+.carousel-nav {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: color var(--transition-speed), transform 0.1s;
+}
+
+.carousel-nav:hover { color: var(--accent-color); }
+.carousel-nav:active { transform: scale(0.9); }
+
+.carousel-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 8px;
+}
+
+#carousel-img {
+    width: 150px;
+    height: 300px;
+    border-radius: 50%;
+    overflow: hidden;           /* clips the sprite sheet to a circle */
+    position: relative;         /* anchor for the absolutely-positioned img */
+    background-color: var(--bg-secondary);
+    border: 2px solid var(--accent-color);
+}
+
+#carousel-name {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.character-stats {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.stat-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.stat-badge span:first-child {
+    color: var(--text-dim);
+    font-size: 0.6rem;
+    font-weight: 700;
+}
+
+.stat-badge span:last-child {
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
