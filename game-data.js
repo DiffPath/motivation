@@ -68,7 +68,7 @@ const gameMonsters = {
         isBoss: false,
         overworldUrl: 'https://i.imgur.com/pJGcFgm.png',
         glow: 'rgba(34, 197, 94, 0.5)',
-        battleImg: 'https://imgur.com/a/nkeCj4e',
+        battleImg: 'https://i.imgur.com/2o29aov.jpeg',
         allowedZones: ['overworld'],
         scale: 2.0,
         hp: 20, str: 3, def: 1,
@@ -79,7 +79,7 @@ const gameMonsters = {
         isBoss: false,
         overworldUrl: 'https://i.imgur.com/pJGcFgm.png',
         glow: 'rgba(34, 197, 94, 0.5)',
-        battleImg: 'https://imgur.com/a/nkeCj4e', //https://imgur.com/a/nkeCj4e
+        battleImg: 'https://i.imgur.com/PNUqNiP.jpeg', //https://imgur.com/a/nkeCj4e
         allowedZones: ['overworld'],
         scale: 2.0,
         hp: 20, str: 3, def: 3,
@@ -90,7 +90,7 @@ const gameMonsters = {
         isBoss: false,
         overworldUrl: 'https://i.imgur.com/pJGcFgm.png',
         glow: 'rgba(34, 197, 94, 0.5)',
-        battleImg: 'https://imgur.com/a/nkeCj4e',  //https://imgur.com/a/nkeCj4e
+        battleImg: 'https://i.imgur.com/FxCGSDk.jpeg',  //https://imgur.com/a/nkeCj4e
         allowedZones: ['overworld'],
         scale: 2.0,
         hp: 15, str: 4, def: 2,
