@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Motivation RPG</title>
-    <link rel="stylesheet" href="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\game.css">
+    <link rel="stylesheet" href="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\layout.css">
+    <link rel="stylesheet" href="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\adventure.css">
+    <link rel="stylesheet" href="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\components.css">
+    <link rel="stylesheet" href="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\lostpegs.css">
     <link rel="stylesheet" href="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\boss-fight.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -96,6 +99,9 @@
                 <li class="nav-item active" data-tab="adventure">
                     <i class="fas fa-map-marked-alt"></i> <span>Adventure</span>
                 </li>
+                <li class="nav-item" data-tab="minigames" id="minigames-nav-item" style="display: none;">
+                    <i class="fas fa-dice"></i> <span>Mini-Games</span>
+                </li>
                 <li class="nav-item" data-tab="activities">
                     <i class="fas fa-fist-raised"></i> <span>Activities</span>
                 </li>
@@ -103,11 +109,11 @@
                     <i class="fas fa-user-shield"></i> <span>Character</span>
                     <span class="nav-badge" id="character-tab-badge"></span>
                 </li>
-                <li class="nav-item" data-tab="stats">
-                    <i class="fas fa-chart-line"></i> <span>Stats</span>
-                </li>
                 <li class="nav-item" data-tab="friends">
                     <i class="fas fa-users"></i> <span>Friends</span>
+                </li>
+                <li class="nav-item" data-tab="stats">
+                    <i class="fas fa-chart-line"></i> <span>Stats</span>
                 </li>
                 <li class="nav-item" data-tab="settings">
                     <i class="fas fa-cog"></i> <span>Settings</span>
@@ -214,7 +220,7 @@
                         <i class="fas fa-shield-alt"></i> Stats &amp; Gear
                     </button>
                     <button class="char-subtab-btn" id="char-btn-quest" onclick="switchCharTab('quest')">
-                        <i class="fas fa-scroll"></i> Quest Log
+                        <i class="fa-solid fa-scroll"></i> Quest Log
                     </button>
                 </div>
 
@@ -276,6 +282,7 @@
                     <button class="stats-tab-btn active" data-target="stats-charts-view">Charts</button>
                     <button class="stats-tab-btn" data-target="stats-records-view">Hall of Records</button>
                     <button class="stats-tab-btn" data-target="stats-calendar-view">Activity Calendar</button>
+                    <button class="stats-tab-btn" data-target="stats-gratitude-view">Gratitude Log</button>
                 </div>
 
                 <div id="stats-charts-view" class="stats-sub-view active">
@@ -305,6 +312,10 @@
                 <div id="stats-records-view" class="stats-sub-view">
                     <div class="records-grid" id="records-container">
                     </div>
+                </div>
+
+                <div id="stats-gratitude-view" class="stats-sub-view">
+                    <div id="gratitude-log-container"></div>
                 </div>
 
                 <div id="stats-calendar-view" class="stats-sub-view">
@@ -355,15 +366,83 @@
                     </div>
                 </div>
             </section>
+
+            <section id="minigames" class="tab-content">
+                <div class="adventure-header">
+                    <h1>Mini-Games</h1>
+                </div>
+
+                <div class="minigames-toggle-nav">
+                    <button class="minigames-tab-btn active" data-target="lost-pegs-view">The Lost Pegs</button>
+                </div>
+
+                <!-- ===== The Lost Pegs (pachinko) ===== -->
+                <div id="lost-pegs-view" class="minigames-sub-view active">
+                    <div class="lost-pegs-layout">
+
+                        <!-- Left: stats / token panel -->
+                        <div class="lost-pegs-panel">
+                            <h3>The Lost Pegs</h3>
+                            <div class="lost-pegs-stat-row">
+                                <span class="lost-pegs-stat-label">Tokens</span>
+                                <span class="lost-pegs-stat-value tokens">
+                                    🎟️ <span id="lost-pegs-tokens">0</span>
+                                </span>
+                            </div>
+                            <div class="lost-pegs-stat-row">
+                                <span class="lost-pegs-stat-label">Score</span>
+                                <span class="lost-pegs-stat-value score" id="lost-pegs-score">0</span>
+                            </div>
+                            <div class="lost-pegs-stat-row">
+                                <span class="lost-pegs-stat-label">Best</span>
+                                <span class="lost-pegs-stat-value best" id="lost-pegs-best">0</span>
+                            </div>
+                            <div class="lost-pegs-stat-row">
+                                <span class="lost-pegs-stat-label">Drops</span>
+                                <span class="lost-pegs-stat-value" id="lost-pegs-drops">0</span>
+                            </div>
+
+                            <div class="lost-pegs-token-hint">
+                                Earn <strong>1 token</strong> for every <strong>10 XP</strong> you gain.<br>
+                                Each drop costs <strong>1 token</strong>.
+                            </div>
+                        </div>
+
+                        <!-- Center: board -->
+                        <div class="lost-pegs-board-wrapper">
+                            <canvas id="lost-pegs-canvas" width="480" height="640"></canvas>
+                            <div class="lost-pegs-message" id="lost-pegs-message"></div>
+                            <div class="lost-pegs-actions">
+                                <button class="lost-pegs-btn" id="lost-pegs-drop-btn">Drop</button>
+                                <button class="lost-pegs-btn secondary" id="lost-pegs-reset-btn">Reset</button>
+                            </div>
+                            <p class="lost-pegs-instructions">
+                                Move with mouse or <kbd>←</kbd>/<kbd>→</kbd>.
+                                Drop with click, <kbd>Space</kbd>, or <kbd>Enter</kbd>.
+                            </p>
+                        </div>
+
+                        <!-- Right: drop log -->
+                        <div class="lost-pegs-panel">
+                            <h3>Drop Log</h3>
+                            <ul class="lost-pegs-log-list" id="lost-pegs-log-list"></ul>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script src="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\game-data.js"></script>
-
-    <script src="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\game.js"></script>
-    <script src="C:\Users\Mike\Documents\VS Code Projects\VSCode\Marrow\Game\boss-fight.js"></script>
+    <script src="game-data.js"></script>
+    <script src="image-cache.js"></script>
+    <script src="engine.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+    <script src="boss-fight.js"></script>
+    <script src="lostpegs.js"></script>
 
 </body>
 
