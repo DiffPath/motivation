@@ -1,0 +1,601 @@
+/* =============================================================================
+   COMPONENTS.CSS
+   Battle arena, adventure sidebar layout, chat, scrollbars, path selector,
+   exhaustion overlay, toast notification, daily reward modal, confetti.
+   ============================================================================= */
+
+/* --- FULL SCREEN BATTLE ARENA --- */
+.battle-arena {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.95); /* Deep slate backdrop */
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    z-index: 300;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+.battle-header-msg {
+    text-align: center;
+    color: #f8fafc;
+    font-size: 1.1rem;
+    min-height: 50px;
+    font-style: italic;
+}
+
+.battle-combatants {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    gap: 10px;
+}
+
+.combatant-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.combatant-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.combatant-avatar {
+    width: 160px; /* Increased from 100px */
+    height: 160px; /* Increased from 100px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 6rem; /* Increased from 4rem so emojis scale up */
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    overflow: hidden;
+}
+
+.combatant-stats {
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+.hp-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin: 5px 0 10px 0;
+    overflow: hidden;
+}
+
+.hp-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease-out;
+}
+
+.battle-vs {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+}
+
+/* --- ADVENTURE LAYOUT --- */
+#adventure-layout-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    /* You can adjust this max-height depending on how much space you want it to take */
+    max-height: 85vh; 
+    align-items: stretch;
+}
+
+/* Constrain the game canvas area */
+#viewport-container {
+    flex: 1 1 auto;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    
+    /* This forces a perfect square. */
+    aspect-ratio: 1 / 1; 
+    max-width: 100%;
+}
+
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: none;        /* don't scale/stretch the canvas's pixel buffer */
+    object-position: center; /* keep the player (drawn at canvas center) visually centered */
+}
+
+/* --- ADVENTURE LAYOUT --- */
+#adventure-sidebar {
+    width: 400px; /* INCREASED from 320px */
+    flex: 0 0 400px; /* INCREASED from 320px */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* --- CHAT INPUT STYLES --- */
+.chat-input-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.chat-input-wrapper input {
+    flex-grow: 1;
+    padding: 10px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color var(--transition-speed);
+}
+
+.chat-input-wrapper input:focus {
+    border-color: var(--accent-color);
+}
+
+.chat-btn {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 6px;
+    padding: 0 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-btn:active {
+    transform: scale(0.95);
+}
+
+/* Styling for the new sidebar panels */
+.sidebar-panel {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-header {
+    margin: 0 0 10px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1rem;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* --- SIDEBAR SCROLLING & SIZING --- */
+#status-content {
+    height: 180px; /* Makes the live status box taller */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding-right: 8px; /* Prevents text from rubbing against the scrollbar */
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Adds a little space between each status line */
+}
+
+#chat-messages {
+    padding-right: 8px; /* Matches the status content padding */
+}
+
+/* --- THEMED SCROLLBARS --- */
+/* Targets both the status and chat windows */
+#status-content::-webkit-scrollbar,
+#chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#status-content::-webkit-scrollbar-track,
+#chat-messages::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2); 
+    border-radius: 4px;
+}
+
+#status-content::-webkit-scrollbar-thumb,
+#chat-messages::-webkit-scrollbar-thumb {
+    background: var(--border-color); /* Uses your active theme's border color */
+    border-radius: 4px;
+}
+
+#status-content::-webkit-scrollbar-thumb:hover,
+#chat-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color); /* Brightens to your active theme's accent color on hover */
+}
+/* --- ACTIVITY PATH SELECTOR (Character Creator) --- */
+.path-card {
+    background: var(--bg-secondary);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.path-card:hover {
+    border-color: var(--accent-color) !important;
+    background: rgba(56, 189, 248, 0.05);
+}
+
+.path-card.selected {
+    border-color: var(--accent-color) !important;
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.path-card:not(.selected) {
+    border-color: var(--border-color) !important;
+}
+/* ============================================================
+   ENERGY / EXHAUSTION / DAILY REWARD SYSTEM
+   ============================================================ */
+
+/* --- EXHAUSTION OVERLAY --- */
+#exhaustion-banner {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 20, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+    animation: exhaustion-fade-in 0.6s ease-out;
+}
+
+@keyframes exhaustion-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.exhaustion-inner {
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid #ef4444;
+    border-radius: 16px;
+    padding: 36px 40px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 0 60px rgba(239, 68, 68, 0.2);
+    animation: exhaustion-pulse 3s ease-in-out infinite;
+}
+
+@keyframes exhaustion-pulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.15); }
+    50%       { box-shadow: 0 0 70px rgba(239, 68, 68, 0.30); }
+}
+
+.exhaustion-icon {
+    font-size: 3.5rem;
+    margin-bottom: 12px;
+}
+
+.exhaustion-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ef4444;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.exhaustion-body {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 22px;
+}
+
+.exhaustion-cta {
+    background: linear-gradient(135deg, #38bdf8, #0284c7);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 12px 28px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+
+.exhaustion-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+}
+
+/* --- TOAST NOTIFICATION --- */
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* --- DAILY REWARD MODAL --- */
+@keyframes modal-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes reward-card-in {
+    from { opacity: 0; transform: scale(0.88) translateY(24px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+.daily-reward-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 44px;
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+    animation: reward-card-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.daily-reward-card.leveled-up {
+    border-color: #fcd34d;
+    box-shadow: 0 20px 80px rgba(252, 211, 77, 0.3), 0 0 0 1px rgba(252,211,77,0.15);
+}
+
+.reward-dawn-icon {
+    font-size: 4rem;
+    margin-bottom: 12px;
+    display: block;
+    animation: reward-icon-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes reward-icon-drop {
+    from { opacity: 0; transform: scale(0.5) translateY(-20px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0);     }
+}
+
+.reward-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.reward-subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+/* Level-up banner inside the reward card */
+.reward-levelup-banner {
+    background: linear-gradient(135deg, rgba(252,211,77,0.12), rgba(251,191,36,0.06));
+    border: 1px solid #fcd34d;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    animation: levelup-glow 2s ease-in-out infinite;
+}
+
+@keyframes levelup-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(252,211,77,0.15); }
+    50%       { box-shadow: 0 0 40px rgba(252,211,77,0.35); }
+}
+
+.reward-levelup-stars {
+    font-size: 1.2rem;
+    color: #fcd34d;
+    letter-spacing: 8px;
+    margin-bottom: 6px;
+    animation: stars-twinkle 1.2s ease-in-out infinite;
+}
+
+@keyframes stars-twinkle {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.65; }
+}
+
+.reward-levelup-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fcd34d;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.reward-levelup-sub {
+    font-size: 1rem;
+    color: var(--text-main);
+    margin-bottom: 6px;
+}
+
+.reward-levelup-note {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+}
+
+/* XP + Energy gain cards */
+.reward-gains-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    justify-content: center;
+}
+
+.reward-gain-card {
+    flex: 1;
+    max-width: 160px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 18px 12px;
+    animation: gain-card-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both;
+}
+
+@keyframes gain-card-pop {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1);   }
+}
+
+.reward-gain-card.xp-card     { border-color: rgba(168,85,247,0.4); }
+.reward-gain-card.energy-card { border-color: rgba(56,189,248,0.4); }
+
+.reward-gain-icon   { font-size: 1.6rem; margin-bottom: 6px; }
+.reward-gain-amount { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1; margin-bottom: 4px; }
+.reward-gain-label  { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
+
+.reward-gain-card.xp-card .reward-gain-amount     { color: #a855f7; }
+.reward-gain-card.energy-card .reward-gain-amount { color: #38bdf8; }
+
+.reward-dismiss-btn {
+    background: var(--accent-color);
+    border: none;
+    border-radius: 10px;
+    color: var(--bg-primary);
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 14px 32px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    letter-spacing: 1px;
+}
+
+.reward-dismiss-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(56, 189, 248, 0.4);
+}
+
+/* --- CONFETTI PARTICLES (level up) --- */
+@keyframes confetti-fall {
+    0%   { transform: translateY(-10px) rotate(0deg);   opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* =============================================================================
+   FATE COIN & MINI-GAMES SIDEBAR PANEL
+   ============================================================================= */
+
+/* Fate Coin counter row at the top of the panel */
+.fate-coin-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(251, 191, 36, 0.07);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+}
+
+.fate-coin-label {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+
+.fate-coin-count {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    min-width: 28px;
+    text-align: right;
+}
+
+/* Grid that holds mini-game slot cards on the Mini-Games tab page */
+.minigames-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+}
+
+/* Individual mini-game slot card */
+.minigame-slot {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    text-align: center;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.minigame-slot.locked {
+    opacity: 0.65;
+    cursor: default;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.minigame-slot-icon {
+    font-size: 2rem;
+    margin-bottom: 2px;
+}
+
+.minigame-slot-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+
+.minigame-slot-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+    font-style: italic;
+}
+
+.minigame-slot-badge {
+    margin-top: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 4px;
+    padding: 3px 10px;
+}
