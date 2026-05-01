@@ -222,7 +222,11 @@ document.addEventListener('DOMContentLoaded', function () {
             quest_items: [],
             wardens_key: false,
             pachinko_tokens: 0,
-            opened_chests: {}
+            opened_chests: {},
+            // --- Folded into the main save (formerly separate localStorage keys) ---
+            fog_master: {},        // { [mapId]: [exploredTile, ...] }
+            fog_decay: 0,          // ms timestamp of last daily decay
+            personal_scroll: null  // tile coord string like "82,71", or null after pickup
         };
 
         let savedData = JSON.parse(localStorage.getItem('motivation_RPG'));
@@ -285,6 +289,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!savedData.opened_chests) savedData.opened_chests = {};
             window.myOpenedChests = savedData.opened_chests;
+
+            // --- New-fields patch (folded-in keys) -----------------------
+            // Default the three new top-level fields if this save predates them.
+            if (savedData.fog_master === undefined)     savedData.fog_master = {};
+            if (savedData.fog_decay === undefined)      savedData.fog_decay = 0;
+            if (savedData.personal_scroll === undefined) savedData.personal_scroll = null;
+
+            // --- One-time legacy-key migration ---------------------------
+            // Earlier versions stored these three pieces of state in their own
+            // localStorage keys, scoped by hero_name.  Fold any surviving
+            // values into the main save and remove the legacy keys so the
+            // user ends up with a single entry going forward.
+            if (savedData.hero_name) {
+                const _legacyFogKey    = 'rpg_fog_master_' + savedData.hero_name;
+                const _legacyDecayKey  = 'fog_decay_' + savedData.hero_name;
+                const _legacyScrollKey = 'rpg_personal_scroll_' + savedData.hero_name;
+
+                const _legacyFog = localStorage.getItem(_legacyFogKey);
+                if (_legacyFog !== null) {
+                    try {
+                        const parsed = JSON.parse(_legacyFog);
+                        // Only overwrite if the new field is empty — never clobber fresher data.
+                        if (parsed && typeof parsed === 'object' && Object.keys(savedData.fog_master).length === 0) {
+                            savedData.fog_master = parsed;
+                        }
+                    } catch (_e) { /* corrupt legacy value — drop it */ }
+                    localStorage.removeItem(_legacyFogKey);
+                }
+
+                const _legacyDecay = localStorage.getItem(_legacyDecayKey);
+                if (_legacyDecay !== null) {
+                    const n = parseInt(_legacyDecay, 10);
+                    if (!Number.isNaN(n) && n > savedData.fog_decay) savedData.fog_decay = n;
+                    localStorage.removeItem(_legacyDecayKey);
+                }
+
+                const _legacyScroll = localStorage.getItem(_legacyScrollKey);
+                if (_legacyScroll !== null) {
+                    if (!savedData.personal_scroll) savedData.personal_scroll = _legacyScroll;
+                    localStorage.removeItem(_legacyScrollKey);
+                }
+
+                // Persist the migrated save so the next read sees the consolidated shape.
+                localStorage.setItem('motivation_RPG', JSON.stringify(savedData));
+            }
         }
 
 
@@ -320,42 +369,40 @@ document.addEventListener('DOMContentLoaded', function () {
         let data = getSaveData();
         if (!data.hero_name) return;
 
-        let masterKey = 'rpg_fog_master_' + data.hero_name;
-        let masterFog = JSON.parse(localStorage.getItem(masterKey) || '{}');
-
         // FIX: Pull the LIVE fog directly from the game engine
         if (window.gameEngine) {
-            masterFog[currentMapId] = Array.from(window.gameEngine.exploredTiles);
+            if (!data.fog_master) data.fog_master = {};
+            data.fog_master[currentMapId] = Array.from(window.gameEngine.exploredTiles);
 
             // --- NEW: FAST-CACHE EXACT PIXEL POSITION ---
             if (!data.adventure_state) data.adventure_state = {};
             data.adventure_state.last_x = window.gameEngine.player.x;
             data.adventure_state.last_y = window.gameEngine.player.y;
             data.adventure_state.last_map = currentMapId;
-
-            // Save synchronously so the browser closure doesn't interrupt it
-            localStorage.setItem('motivation_RPG', JSON.stringify(data));
         }
 
         // SAFEGUARD: Prevent LocalStorage 5MB quota errors by pruning old caves
-        let savedMaps = Object.keys(masterFog);
+        let savedMaps = Object.keys(data.fog_master || {});
         if (savedMaps.length > 15) {
             let staleMap = savedMaps.find(k => k !== 'overworld' && k !== currentMapId);
-            if (staleMap) delete masterFog[staleMap];
+            if (staleMap) delete data.fog_master[staleMap];
         }
 
-        localStorage.setItem(masterKey, JSON.stringify(masterFog));
+        // Save synchronously so the browser closure doesn't interrupt it
+        localStorage.setItem('motivation_RPG', JSON.stringify(data));
     }
 
     function applyGlobalFogDecay(heroName) {
         const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-        let lastDecay = parseInt(localStorage.getItem(`fog_decay_${heroName}`) || '0');
+        let data = getSaveData();
+        if (!data.hero_name) return;
+
+        let lastDecay = data.fog_decay || 0;
         let now = Date.now();
 
         // If 24 hours have passed since the last chop...
         if (now - lastDecay >= ONE_DAY_MS) {
-            let masterKey = 'rpg_fog_master_' + heroName;
-            let masterFog = JSON.parse(localStorage.getItem(masterKey) || '{}');
+            let masterFog = data.fog_master || {};
             let didDecay = false;
 
             // Loop through the overworld and all saved caves
@@ -372,12 +419,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (didDecay) {
-                localStorage.setItem(masterKey, JSON.stringify(masterFog));
+                data.fog_master = masterFog;
                 console.log("Daily fog decay applied. Oldest paths forgotten.");
             }
 
-            // Record today's decay timestamp
-            localStorage.setItem(`fog_decay_${heroName}`, now.toString());
+            // Record today's decay timestamp and persist (single write)
+            data.fog_decay = now;
+            localStorage.setItem('motivation_RPG', JSON.stringify(data));
         }
     }
 
@@ -2661,7 +2709,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.mapTerrain = mapTerrain;
         window.gridEntities = gridEntities;
 
-        let masterFog = JSON.parse(localStorage.getItem('rpg_fog_master_' + data.hero_name) || '{}');
+        let masterFog = data.fog_master || {};
         exploredPoints = masterFog[currentMapId] || [];
 
         if (window.gameEngine) {
@@ -3308,10 +3356,10 @@ document.addEventListener('DOMContentLoaded', function () {
             window.sparklePathTiles = null;
             window.personalScrollKey = null;
 
-            // Remove the stored tile from localStorage so it never comes back
+            // Remove the stored tile from the main save so it never comes back
             const _lSave = JSON.parse(localStorage.getItem('motivation_RPG') || '{}');
-            const _psKey = `rpg_personal_scroll_${_lSave.hero_name || ''}`;
-            localStorage.removeItem(_psKey);
+            _lSave.personal_scroll = null;
+            localStorage.setItem('motivation_RPG', JSON.stringify(_lSave));
 
             // Allow the proximity trigger to fire again if this player ever re-approaches
             // (shouldn't happen since personalScrollKey is now null, but defensive reset)
@@ -3345,7 +3393,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     function applyZoom(newSize) {
-        newSize = Math.max(40, Math.min(160, newSize));
+        newSize = Math.max(30, Math.min(140, newSize));
 
         // Update the slider UI
         if (zoomSlider) zoomSlider.value = newSize;
@@ -4402,10 +4450,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // --- NEW: WIPE GHOST FOG ---
                 // Clear any leftover fog memory for this coordinate from previous realms
-                let masterFog = JSON.parse(localStorage.getItem('rpg_fog_master_' + data.hero_name) || '{}');
-                if (masterFog[newMapId]) {
-                    delete masterFog[newMapId];
-                    localStorage.setItem('rpg_fog_master_' + data.hero_name, JSON.stringify(masterFog));
+                if (data.fog_master && data.fog_master[newMapId]) {
+                    delete data.fog_master[newMapId];
+                    localStorage.setItem('motivation_RPG', JSON.stringify(data));
                 }
             } else {
                 let caveData = snap.val();
@@ -4420,15 +4467,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // --- PERSONAL SPARKLE PATH & PERSONAL SCROLL ---
         // Each player gets their own private scroll placed near the map centre.
-        // The scroll position is stored only in localStorage — never written to Firebase —
-        // so no other player can see it. The sparkle trail points from (75,75) to that
-        // private scroll. Once the player picks it up the trail and scroll are cleared.
+        // The scroll position lives on the main save (data.personal_scroll) and
+        // is never written to Firebase, so no other player can see it. The
+        // sparkle trail points from (75,75) to that private scroll. Once the
+        // player picks it up the trail and scroll are cleared.
         (function () {
             if (currentMapId !== 'overworld') return;
 
             const _localSave = JSON.parse(localStorage.getItem('motivation_RPG') || '{}');
-            const _heroName = _localSave.hero_name || '';
-            const _lsKey = `rpg_personal_scroll_${_heroName}`;
 
             // Player already read their scroll — nothing to show.
             if (_localSave.quest_items && _localSave.quest_items.includes('scroll')) {
@@ -4438,7 +4484,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Load an existing personal scroll tile, or generate one for a brand-new player.
-            let personalScrollKey = localStorage.getItem(_lsKey);
+            let personalScrollKey = _localSave.personal_scroll || null;
 
             if (!personalScrollKey) {
                 // Build an exclusion set: tiles already occupied + the immediate safe zone.
@@ -4459,7 +4505,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         _ty >= 0 && _ty < ENGINE.MAP_HEIGHT &&
                         !_used.has(_k)) {
                         personalScrollKey = _k;
-                        localStorage.setItem(_lsKey, _k);
+                        _localSave.personal_scroll = _k;
+                        localStorage.setItem('motivation_RPG', JSON.stringify(_localSave));
                         break;
                     }
                 }
@@ -4497,7 +4544,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // so the visual zoom level matches what the zoom bar shows on load.
         applyZoom(parseInt(zoomSlider.value, 10));
 
-        let masterFog = JSON.parse(localStorage.getItem('rpg_fog_master_' + data.hero_name) || '{}');
+        let masterFog = data.fog_master || {};
         let bootFog = masterFog[currentMapId] || [];
         if (bootFog.length > 0) {
             window.gameEngine.resetFog(bootFog);
@@ -5441,24 +5488,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     // Backward-compat alias so any console muscle-memory still works
     window.devGiveFateCoin = window.devGiveWardensKey;
-
-    // Bind the cheat to the F9 key
-    window.addEventListener('keydown', function (e) {
-        if (e.key === 'F9') {
-            e.preventDefault(); // Stop the browser from doing any default F9 actions
-            window.devFillEnergy();
-        }
-        // F10: Dev cheat — unlock all quest items (testing only)
-        if (e.key === 'F10') {
-            e.preventDefault();
-            window.devUnlockQuest();
-        }
-        // F11: Dev cheat — grant the Warden's Key + 10 Pachinko Tokens (testing only)
-        if (e.key === 'F11') {
-            e.preventDefault();
-            window.devGiveWardensKey();
-        }
-    });
 
     // --- Emergency Fog Save on Exit ---
     window.addEventListener('beforeunload', function () {
