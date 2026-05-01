@@ -36,7 +36,7 @@ const gameAssets = {
     fogTextured: 'https://i.ibb.co/My9Vh5Nm/Gemini-Generated-Image-867rcf867rcf867r.png',
     chestSprite: 'https://i.ibb.co/Ndx9nCJS/101-1016940-chest-top-down-chest-sprite.png',
     caveEntrance: 'https://i.ibb.co/4w5gLS11/1777166973895-019dc767-1ca2-7e76-9398-95c20789c9dd-Photoroom.png',
-    wizardSprite: 'YOUR_WIZARD_SPRITE_URL_HERE'  // <-- Paste your wizard sprite URL here
+    wizardSprite: 'https://i.ibb.co/2YvMR6L7/wizard-Photoroom.png'  // <-- Paste your wizard sprite URL here
 };
 
 const getIntroCinematicText = (heroName) => [
@@ -189,7 +189,7 @@ const gameMonsters = {
 const heroClasses = {
     "Black Cat": {
         name: "Black Cat",
-        portraitSheet: "https://i.ibb.co/qY3k1CMr/cat-profile-sheet2.png", // Replace with your sprite sheet URL
+        portraitSheet: "https://i.ibb.co/qY3k1CMr/cat-profile-sheet2.png",
         emoji: "🐈‍⬛",
         stats: { str: 5, def: 4, vit: 3, int: 8, end: 7 },
         sprites: {
