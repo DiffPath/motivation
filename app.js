@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // NEW PATCH: Ensure current HP and Energy exist
         if (savedData.stats) {
             const maxHp = 50 + (savedData.stats.vit * 10);
-            const maxEnergy = 20 + (savedData.stats.end * 5);
+            const maxEnergy = 50 + (savedData.stats.end * 5);
             if (savedData.stats.current_hp === undefined) savedData.stats.current_hp = maxHp;
             if (savedData.stats.current_energy === undefined) savedData.stats.current_energy = maxEnergy;
 
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const maxHp = 50 + (getTotalStat(data, 'vit') * 10);
-        const maxEnergy = 20 + (getTotalStat(data, 'end') * 5);
+        const maxEnergy = 50 + (getTotalStat(data, 'end') * 5);
 
         const hpPercent = Math.max(0, Math.min(100, (data.stats.current_hp / maxHp) * 100));
 
@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 3. Derived Combat Stats
         const maxHp = 50 + (totalVit * 10);
-        const maxEnergy = 20 + (totalEnd * 5);
+        const maxEnergy = 50 + (totalEnd * 5);
 
         data.stats.current_hp = Math.min(data.stats.current_hp, maxHp);
         data.stats.current_energy = Math.min(data.stats.current_energy, maxEnergy);
@@ -986,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function () {
             pendingXP = Math.floor(pendingXP);
 
             // --- COMPUTE ENERGY GAIN (matches XP earned, capped at player's max energy) ---
-            const maxEnergy = 20 + (getTotalStat(data, 'end') * 5);
+            const maxEnergy = 50 + (getTotalStat(data, 'end') * 5);
             const pendingEnergy = Math.min(pendingXP, maxEnergy);
             const existingIndex = data.eternal_chronicles.findIndex(entry => entry.date === logDate);
             if (existingIndex !== -1) {
@@ -1693,7 +1693,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (selectedChar) {
                     // FIX: Add '.stats' to correctly target the nested values
                     const startingMaxHp = 50 + (selectedChar.stats.vit * 10);
-                    const startingMaxEnergy = 20 + (selectedChar.stats.end * 5);
+                    const startingMaxEnergy = 50 + (selectedChar.stats.end * 5);
 
                     data.stats = {
                         str: selectedChar.stats.str,
@@ -2042,7 +2042,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Apply energy (cap at max)
-        const maxEnergy = 20 + (getTotalStat(data, 'end') * 5);
+        const maxEnergy = 50 + (getTotalStat(data, 'end') * 5);
         data.stats.current_energy = Math.min(
             (data.stats.current_energy || 0) + totalEnergy,
             maxEnergy
@@ -3153,7 +3153,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             updateStatusLog(logMsg);
+            updateSaveData(data); // persist loot before awardXP loads a fresh data snapshot
             let leveled = awardXP(xpGained);
+            data = getSaveData(); // re-sync so the end-of-function updateSaveData doesn't overwrite XP/unspent_points
             if (leveled) updateStatusLog("⬆️ LEVEL UP!");
 
             // Note: The Mini-Games tab is no longer unlocked by random monster
@@ -5445,7 +5447,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             let totalEnd = data.stats.end + bonusEnd;
 
-            const maxEnergy = 20 + (totalEnd * 5);
+            const maxEnergy = 50 + (totalEnd * 5);
 
             // Fill it up
             data.stats.current_energy = maxEnergy;
@@ -5488,6 +5490,24 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     // Backward-compat alias so any console muscle-memory still works
     window.devGiveFateCoin = window.devGiveWardensKey;
+
+    // Bind the cheat to the F9 key
+    window.addEventListener('keydown', function (e) {
+        if (e.key === 'F9') {
+            e.preventDefault(); // Stop the browser from doing any default F9 actions
+            window.devFillEnergy();
+        }
+        // F10: Dev cheat — unlock all quest items (testing only)
+        if (e.key === 'F10') {
+            e.preventDefault();
+            window.devUnlockQuest();
+        }
+        // F11: Dev cheat — grant the Warden's Key + 10 Pachinko Tokens (testing only)
+        if (e.key === 'F11') {
+            e.preventDefault();
+            window.devGiveWardensKey();
+        }
+    });
 
     // --- Emergency Fog Save on Exit ---
     window.addEventListener('beforeunload', function () {
