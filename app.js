@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 { id: 'act-hobbies', key: 'hobbies', label: 'Hobbies', icon: 'fas fa-book-open', unit: '1 xp/minute', xpRate: 2 },
                 { id: 'act-chores', key: 'chores', label: 'Chores', icon: 'fas fa-broom', unit: '2 xp/minute', xpRate: 2 },
                 { id: 'act-water', key: 'water', label: 'Drinking Water', icon: 'fas fa-tint', unit: '10 xp/60 oz', xpRate: 10 },
+                { id: 'act-socializing', key: 'socializing', label: 'Socializing', icon: 'fas fa-users', unit: '0.5 xp/minute', xpRate: 0.5 },
+                { id: 'act-volunteering', key: 'volunteering', label: 'Volunteering', icon: 'fas fa-hand-holding-heart', unit: '2 xp/minute', xpRate: 2 },
                 { id: 'act-minortodo', key: 'minortodo', label: 'Minor To-Do Items', icon: 'fas fa-clipboard-check', unit: '10 xp/item', xpRate: 10 },
                 { id: 'act-majortodo', key: 'majortodo', label: 'Major To-Do Items', icon: 'fas fa-clipboard-check', unit: '40 xp/item', xpRate: 40 }
             ]
@@ -73,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
         movie: { icon: 'fas fa-film', unit: 'min' },  // legacy key
         todo: { icon: 'fas fa-clipboard-check', unit: '' },
         journaling: { icon: 'fas fa-pen-nib', unit: 'min' },
-        water: { icon: 'fas fa-tint', unit: 'glasses' }
+        water: { icon: 'fas fa-tint', unit: 'glasses' },
+        volunteering: { icon: 'fas fa-hand-holding-heart', unit: 'min' }
     };
 
     // Universal XP calculator — handles all known stat keys
@@ -89,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
             (s.reading || 0) * 2 +
             (s.work || 0) * 1 +
             (s.socializing || s.movie || 0) * 0.5 +
+            (s.volunteering || 0) * 2 +
             (s.todo || 0) * 10 +
             (s.journaling || 0) * 2 +
             (s.water || 0) * 5
@@ -502,7 +506,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const maxHp = 50 + (getTotalStat(data, 'vit') * 10);
-        const maxEnergy = 50 + (getTotalStat(data, 'end') * 5);
+        const maxEnergy = 20 + (getTotalStat(data, 'end') * 5);
 
         const hpPercent = Math.max(0, Math.min(100, (data.stats.current_hp / maxHp) * 100));
 
@@ -683,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 3. Derived Combat Stats
         const maxHp = 50 + (totalVit * 10);
-        const maxEnergy = 50 + (totalEnd * 5);
+        const maxEnergy = 20 + (totalEnd * 5);
 
         data.stats.current_hp = Math.min(data.stats.current_hp, maxHp);
         data.stats.current_energy = Math.min(data.stats.current_energy, maxEnergy);
@@ -986,7 +990,7 @@ document.addEventListener('DOMContentLoaded', function () {
             pendingXP = Math.floor(pendingXP);
 
             // --- COMPUTE ENERGY GAIN (matches XP earned, capped at player's max energy) ---
-            const maxEnergy = 50 + (getTotalStat(data, 'end') * 5);
+            const maxEnergy = 20 + (getTotalStat(data, 'end') * 5);
             const pendingEnergy = Math.min(pendingXP, maxEnergy);
             const existingIndex = data.eternal_chronicles.findIndex(entry => entry.date === logDate);
             if (existingIndex !== -1) {
@@ -1693,7 +1697,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (selectedChar) {
                     // FIX: Add '.stats' to correctly target the nested values
                     const startingMaxHp = 50 + (selectedChar.stats.vit * 10);
-                    const startingMaxEnergy = 50 + (selectedChar.stats.end * 5);
+                    const startingMaxEnergy = 20 + (selectedChar.stats.end * 5);
 
                     data.stats = {
                         str: selectedChar.stats.str,
@@ -2042,7 +2046,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Apply energy (cap at max)
-        const maxEnergy = 50 + (getTotalStat(data, 'end') * 5);
+        const maxEnergy = 20 + (getTotalStat(data, 'end') * 5);
         data.stats.current_energy = Math.min(
             (data.stats.current_energy || 0) + totalEnergy,
             maxEnergy
@@ -5447,7 +5451,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             let totalEnd = data.stats.end + bonusEnd;
 
-            const maxEnergy = 50 + (totalEnd * 5);
+            const maxEnergy = 20 + (totalEnd * 5);
 
             // Fill it up
             data.stats.current_energy = maxEnergy;
