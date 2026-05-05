@@ -66,34 +66,34 @@ const gameMonsters = {
     'forest_dweller': {
         name: 'Forest Dweller',
         isBoss: false,
-        overworldUrl: 'https://i.ibb.co/C5MQDTcV/image-Photoroom.png',
+        overworldUrl: 'https://i.ibb.co/gMXJT67D/image.png',
         glow: 'rgba(34, 197, 94, 0.5)',
         battleImg: 'https://i.imgur.com/2o29aov.jpeg',
         allowedZones: ['overworld'],
         scale: 2.0,
-        hp: 20, str: 3, def: 1,
+        hp: 120, str: 7, def: 4,
         spawnWeight: 40
     },
     'glowburrow': {
         name: 'Glowburrow',
         isBoss: false,
-        overworldUrl: 'https://i.ibb.co/BVw49s6C/image-Photoroom-1.png',
+        overworldUrl: 'https://i.ibb.co/C5MQDTcV/image-Photoroom.png',
         glow: 'rgba(34, 197, 94, 0.5)',
         battleImg: 'https://i.imgur.com/PNUqNiP.jpeg', //https://imgur.com/a/nkeCj4e
         allowedZones: ['overworld'],
         scale: 2.0,
-        hp: 20, str: 3, def: 3,
+        hp: 60, str: 5, def: 8,
         spawnWeight: 40
     },
     'pebblin': {
         name: 'Pebblin',
         isBoss: false,
-        overworldUrl: 'https://i.ibb.co/gMXJT67D/image.png',
+        overworldUrl: 'https://i.ibb.co/BVw49s6C/image-Photoroom-1.png',
         glow: 'rgba(34, 197, 94, 0.5)',
         battleImg: 'https://i.imgur.com/FxCGSDk.jpeg',  //https://imgur.com/a/nkeCj4e
         allowedZones: ['overworld'],
         scale: 2.0,
-        hp: 15, str: 4, def: 2,
+        hp: 25, str: 4, def: 2,
         spawnWeight: 40
     },
     'skeleton': {
@@ -104,7 +104,7 @@ const gameMonsters = {
         battleImg: 'https://i.ibb.co/BHVQxPmc/image.png',
         allowedZones: ['cave'],
         scale: 2.0,
-        hp: 40, str: 6, def: 1,
+        hp: 70, str: 7, def: 3,
         spawnWeight: 35
     },
     'cave_goblin': {
@@ -115,7 +115,7 @@ const gameMonsters = {
         battleImg: 'https://i.imgur.com/XR3veyB.jpeg',
         allowedZones: ['cave'],
         scale: 2.0,
-        hp: 60, str: 3, def: 8,
+        hp: 110, str: 3, def: 8,
         spawnWeight: 20
     },
     'phantom': {
@@ -137,7 +137,7 @@ const gameMonsters = {
         battleImg: 'https://i.ibb.co/zTMNhZRr/image.png',
         allowedZones: ['cave'],
         scale: 1.5,
-        hp: 20, str: 4, def: 4,
+        hp: 40, str: 4, def: 4,
         spawnWeight: 20
     },
 
