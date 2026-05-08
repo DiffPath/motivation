@@ -327,6 +327,7 @@ function makePlayerEntry(data, isInitiator) {
     return {
         heroName:      data.hero_name,
         heroClass:     data.hero_class,
+        level:         (data.stats && data.stats.level) || 1,
         joined:        true,
         isInitiator:   !!isInitiator,
         // Combat stats are SNAPSHOTS — they only refresh between rounds, after
@@ -833,19 +834,41 @@ function drawBossRoom(battle) {
     panel.classList.add('active');
 }
 
+// Spritesheet layout: 5 columns × 2 rows (matches the 500%/200% sizing used in renderBattleUI).
+// Falls back to window.getPortraitFrameIndex if available so we stay in sync if that ever changes.
+function _bossPortraitFrame(level) {
+    if (typeof window.getPortraitFrameIndex === 'function') {
+        return window.getPortraitFrameIndex(level);
+    }
+    const idx = Math.max(0, (level || 1) - 1);
+    return { col: idx % 5, row: Math.floor(idx / 5) };
+}
+
 function renderPlayerCard(p, isSelf) {
     if (!p || !p.joined) return renderPlayerCardPlaceholder();
     const hpPct = Math.max(0, Math.min(100, (p.currentHp / Math.max(1, p.maxHp)) * 100));
     const enPct = p.maxBossEnergy ? Math.max(0, Math.min(100, (p.bossEnergy / p.maxBossEnergy) * 100)) : 0;
     const portrait = getHeroImage(p.heroClass);
+    // Crop the spritesheet to the frame that matches this player's level.
+    const { col, row } = _bossPortraitFrame(p.level || 1);
+    const portraitImgStyle = [
+        'position:absolute',
+        'width:500%',
+        'height:200%',
+        `left:${-col * 100}%`,
+        `top:${-row * 100}%`,
+        'max-width:none',
+        'max-height:none',
+        'image-rendering:pixelated',
+    ].join(';');
     const spiritOverlay = p.spirit
         ? `<div class="spirit-overlay">👻<br><span style="font-size:0.6rem; letter-spacing:2px;">SPIRIT</span></div>`
         : '';
     return `
         <div class="boss-combatant-card ${p.spirit ? 'is-spirit' : ''} ${isSelf ? 'is-self' : 'is-ally'}">
             <div class="boss-combatant-name">${p.heroName}${isSelf ? ' (you)' : ''}</div>
-            <div class="boss-combatant-portrait">
-                <img src="${portrait}" alt="${p.heroName}" onerror="this.style.display='none'" />
+            <div class="boss-combatant-portrait" style="overflow:hidden; position:relative;">
+                <img src="${portrait}" alt="${p.heroName}" style="${portraitImgStyle}" onerror="this.style.display='none'" />
                 ${spiritOverlay}
             </div>
             <div class="boss-combatant-bar-row">
