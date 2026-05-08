@@ -1,4 +1,3 @@
-
 /* ==========================================================================
    BOSS FIGHT UI STYLING
    ==========================================================================
@@ -283,31 +282,6 @@
     cursor: not-allowed;
     box-shadow: none;
 }
-
-/* ---- Battle log ------------------------------------------------------ */
-.boss-log {
-    margin-top: 14px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 14px;
-    max-height: 140px;
-    overflow-y: auto;
-}
-.boss-log-title {
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
-.boss-log-entry {
-    color: var(--text-main);
-    font-size: 0.85rem;
-    padding: 3px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-.boss-log-entry:last-child { border-bottom: none; }
 
 /* ---- Victory & defeat cards ----------------------------------------- */
 .boss-victory-card {
