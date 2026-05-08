@@ -100,7 +100,7 @@ const BOSS_FIGHT_CONFIG = {
     MIN_DAMAGE:               1,     // every hit lands for at least 1
 
     // Energy
-    // Each attack costs 1 boss-energy. Players start each round with their full
+    // Each attack costs 10 boss-energy. Players start each round with their full
     // out-of-battle energy pool — but it's a *separate* pool so it doesn't
     // refund their adventuring energy.
 
@@ -634,7 +634,7 @@ window.bossFight_attack = async function () {
 
         const me = battle.players[data.hero_name];
         if (!me || !me.joined) return;
-        if (me.bossEnergy <= 0)  return;
+        if (me.bossEnergy < 10)  return;
         if (me.endedTurn)        return;
 
         // Compute damage.
@@ -644,7 +644,7 @@ window.bossFight_attack = async function () {
         const dmg = Math.max(BOSS_FIGHT_CONFIG.MIN_DAMAGE, Math.floor(baseDmg * jitter * spiritFactor));
 
         battle.boss.hp = Math.max(0, battle.boss.hp - dmg);
-        me.bossEnergy = Math.max(0, me.bossEnergy - 1);
+        me.bossEnergy = Math.max(0, me.bossEnergy - 10);
 
         battle.__lastHitDmg  = dmg;
         battle.__lastHitWho  = data.hero_name;
