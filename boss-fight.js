@@ -957,11 +957,6 @@ function renderAttackingBody(battle, me, ally) {
                     onclick="bossFight_endTurn()">
                 ⏳ End My Turn
             </button>
-            <button class="submit-btn"
-                    style="background:transparent; border:1px solid var(--border-color); color:var(--text-dim);"
-                    onclick="bossFight_minimize()">
-                Step Out
-            </button>
         </div>
 
         ${youWaiting ? `
