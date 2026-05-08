@@ -421,6 +421,8 @@ window.bossFight_acceptAlert = async function (alertKey, battleId) {
 // ---------------------------------------------------------------------------
 let _bossRoomListener = null;
 let _bossRoomBattleId = null;
+let _seenBossLogKeys = new Set();
+
 
 function renderBossBattleRoom(battleId) {
     inEncounter = true;
@@ -453,6 +455,7 @@ function closeBossRoom(silent = false) {
         _bossRoomListener = null;
     }
     _bossRoomBattleId = null;
+     _seenBossLogKeys = new Set();
 
     const panel = document.getElementById('encounter-panel');
     if (panel) {
@@ -828,10 +831,11 @@ function drawBossRoom(battle) {
                 ${phaseBody}
             </div>
 
-            ${renderBattleLog(battle.log)}
         </div>
     `;
     panel.classList.add('active');
+    flushBossLogToStatusArea(battle.log);
+
 }
 
 // Spritesheet layout: 5 columns × 2 rows (matches the 500%/200% sizing used in renderBattleUI).
@@ -988,15 +992,16 @@ function renderBossTurnBody(battle, me, ally) {
     `;
 }
 
-function renderBattleLog(log) {
-    if (!log) return '';
-    const entries = Object.values(log).slice(-8).reverse();
-    return `
-        <div class="boss-log">
-            <div class="boss-log-title">Battle Log</div>
-            ${entries.map(e => `<div class="boss-log-entry">${e.msg}</div>`).join('')}
-        </div>
-    `;
+function flushBossLogToStatusArea(log) {
+    if (!log) return;
+    const sorted = Object.entries(log).sort(([a], [b]) => a < b ? -1 : 1);
+    for (const [key, entry] of sorted) {
+        if (_seenBossLogKeys.has(key)) continue;
+        _seenBossLogKeys.add(key);
+        if (typeof updateStatusLog === 'function' && entry && entry.msg) {
+            updateStatusLog(entry.msg);
+        }
+    }
 }
 
 function formatCountdown(ms) {
