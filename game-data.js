@@ -157,7 +157,7 @@ const gameMonsters = {
         isBoss: true,
         overworldUrl: 'URL_TO_DOOM_SCROLLER_SPRITE.png',
         glow: 'rgba(99, 102, 241, 0.8)',
-        battleImg: 'https://placehold.co/160x160/1e1b4b/6366f1?text=Doom+Scroller',
+        battleImg: 'https://i.ibb.co/hRT0WqBg/1777333125217-019dd14e-e2ed-7f08-8516-f15fa8ae7187.png',
         allowedZones: ['overworld', 'cave'],
         scale: 1.5,
         hp: 100, str: 8, def: 5,
