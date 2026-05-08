@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
             icon: '🌿',
             activities: [
                 { id: 'act-journaling', key: 'journaling', label: 'Journaling', icon: 'fas fa-pen-nib', unit: '2 xp/minute', xpRate: 2 },
-                { id: 'act-exercise', key: 'exercise', label: 'Exercise', icon: 'fas fa-running', unit: '2 xp/minute', xpRate: 3 },
+                { id: 'act-exercise', key: 'exercise', label: 'Exercise', icon: 'fas fa-running', unit: '2 xp/minute', xpRate: 2 },
                 { id: 'act-hobbies', key: 'hobbies', label: 'Hobbies', icon: 'fas fa-book-open', unit: '1 xp/minute', xpRate: 2 },
                 { id: 'act-chores', key: 'chores', label: 'Chores', icon: 'fas fa-broom', unit: '2 xp/minute', xpRate: 2 },
                 { id: 'act-water', key: 'water', label: 'Drinking Water', icon: 'fas fa-tint', unit: '10 xp/60 oz', xpRate: 10 },
@@ -5535,6 +5535,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.updateCharacterTabUI = updateCharacterTabUI;
     window.updateStatusLog = updateStatusLog;
     window.getHeroImage = getHeroImage;
+    window.getPortraitFrameIndex = getPortraitFrameIndex;
     window.checkQuestCompletion = checkQuestCompletion;
     // --- Mini-games / Warden's Key bridge --------------------------------
     // Exposed so lostpegs.js can re-sync the nav badge after a token spend,
