@@ -949,7 +949,7 @@ function renderAttackingBody(battle, me, ally) {
             <button class="submit-btn boss-attack-btn"
                     ${canAttack ? '' : 'disabled'}
                     onclick="bossFight_attack()">
-                ⚔ Attack (1 energy)
+                ⚔ Attack (10 energy)
             </button>
             <button class="submit-btn"
                     style="background:transparent; border:1px solid var(--border-color); color:var(--text-dim);"
