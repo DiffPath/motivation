@@ -5557,5 +5557,57 @@ document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------------------------------------------------
 
     // Boot Up
-    initializeApp();
+auth.onAuthStateChanged(function(user) {
+    const loginScreen = document.getElementById('login-screen');
+
+    if (user) {
+        // Signed in — hide login screen
+        if (loginScreen) loginScreen.style.display = 'none';
+
+        // If localStorage has no hero yet, pull it from Firebase
+        const existing = getSaveData();
+        if (!existing.hero_name) {
+            const heroName = user.email.replace('@game.local', '');
+            db.ref('heroes/' + heroName).once('value').then(snap => {
+                if (snap.exists()) updateSaveData(snap.val());
+                initializeApp();
+            });
+        } else {
+            initializeApp();
+        }
+    } else {
+        // Not signed in — show login screen, hide app
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (appContainer) appContainer.classList.remove('active');
+        if (welcomeScreen) welcomeScreen.classList.remove('active');
+
+        // Login button handler
+        const loginBtn = document.getElementById('login-btn');
+        const errorEl = document.getElementById('login-error');
+
+        if (loginBtn) {
+            loginBtn.onclick = async function() {
+                const name = document.getElementById('login-name').value.trim();
+                const password = document.getElementById('login-password').value;
+                if (!name || !password) return;
+
+                errorEl.style.display = 'none';
+                const fakeEmail = `${name.toLowerCase().replace(/\s+/g, '')}@game.local`;
+
+                try {
+                    await auth.signInWithEmailAndPassword(fakeEmail, password);
+                    // onAuthStateChanged fires again automatically on success
+                } catch (err) {
+                    errorEl.textContent = 'Wrong name or password. Try again.';
+                    errorEl.style.display = 'block';
+                }
+            };
+
+            // Allow pressing Enter to log in
+            document.getElementById('login-password').onkeydown = function(e) {
+                if (e.key === 'Enter') loginBtn.click();
+            };
+        }
+    }
+});
 });
