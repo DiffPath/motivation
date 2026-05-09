@@ -14,6 +14,22 @@
 </head>
 
 <body class="theme-modern">
+    <div id="login-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-dark,#0d0d0d); z-index:9999; align-items:center; justify-content:center;">
+    <div class="welcome-card" style="max-width:400px; width:90%;">
+        <h1 style="margin-bottom: 8px;">Welcome Back</h1>
+        <p style="color:var(--text-dim); margin-bottom:24px;">Enter the realm, hero.</p>
+        <div class="input-group">
+            <label>Name</label>
+            <input type="text" id="login-name" class="uniform-input" placeholder="Your hero's name">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="login-password" class="uniform-input" placeholder="Password">
+        </div>
+        <p id="login-error" style="color:#f87171; margin-bottom:10px; display:none;"></p>
+        <button id="login-btn" class="submit-btn" style="width:100%;">Enter the Realm</button>
+    </div>
+</div>
 
     <div id="welcome-screen">
         <div class="welcome-card">
@@ -44,7 +60,7 @@
                                 <label class="path-card" id="path-card-original" style="cursor:pointer; border: 2px solid var(--accent-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
                                     <input type="radio" name="activity-group" id="group-original" value="original" style="display:none;" checked>
                                     <span style="font-size: 1.5rem;">⚽</span>
-                                    <strong style="color: var(--text-main); font-size: 0.95rem;">Sportsball Path</strong>
+                                    <strong style="color: var(--text-main); font-size: 0.95rem;">Sportsballer's Path</strong>
                                     <span style="font-size: 0.75rem; color: var(--text-dim);">Exercise · Work · Chores · Reading · Socializing · To-Dos</span>
                                 </label>
                                 <label class="path-card" id="path-card-wellness" style="cursor:pointer; border: 2px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
@@ -121,7 +137,7 @@
             </ul>
 
             <div class="sidebar-footer">
-                <small>v2.0.0 Phoenix</small>
+                <small>v2.0.0</small>
             </div>
         </nav>
 
@@ -135,7 +151,7 @@
                     style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; color: var(--text-dim);">
                     <label><i class="fas fa-search"></i> Zoom:</label>
                     <button class="zoom-btn" id="zoom-out"><i class="fas fa-minus"></i></button>
-                    <input type="range" id="zoom-slider" min="40" max="160" value="100">
+                    <input type="range" id="zoom-slider" min="30" max="140" value="60">
                     <button class="zoom-btn" id="zoom-in"><i class="fas fa-plus"></i></button>
                     <span style="margin-left: 20px;"><i class="fas fa-keyboard"></i> WASD / Arrows to move</span>
                 </div>
@@ -436,6 +452,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="game-data.js"></script>
     <script src="image-cache.js"></script>
     <script src="engine.js"></script>
