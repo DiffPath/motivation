@@ -7,7 +7,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyBHWbaqMHNIIdSzFCDkthNZc3NZHMPkVgo",
     authDomain: "motivation-game-26ee1.firebaseapp.com",
-    databaseURL: "https://motivation-game-26ee1-default-rtdb.firebaseio.com",
+    databaseURL: "https://scheduler-f54c7-default-rtdb.firebaseio.com/",
     projectId: "motivation-game-26ee1",
     storageBucket: "motivation-game-26ee1.firebasestorage.app",
     messagingSenderId: "404620697586",
@@ -18,3 +18,4 @@ const firebaseConfig = {
 // Initialize the global 'firebase' object for Realtime Database
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const auth = firebase.auth();
